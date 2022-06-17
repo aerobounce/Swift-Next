@@ -1,0 +1,1904 @@
+%YAML 1.2
+---
+#
+# This file is initially made based on and tested with Swift 5.6.
+#
+name: Swift Next
+scope: source.swift
+version: 2
+first_line_match: |-
+  (?x:
+      ^[#]!/.*\bswift                          # .swift with shebang
+    | ^[/]{2}[ ]swift-interface-format-version # .swiftinterface
+  )
+file_extensions: [swift, swiftinterface]
+
+variables:
+  # https://docs.swift.org/swift-book/ReferenceManual/zzSummaryOfTheGrammar.html
+  # [ Whitespace ] #
+  # whitespace_item: ([\x00\x0B\x0C])
+  line_break: (?:\x0D\x0A?|\x0A) # Line Feed (x0A), Carriage Return (x0D)
+  inline_space: (?:[\x09\x20]) # Space (x20), Horizontal Tab (x09)
+  whitespaces: '\x00\x0B\x0C\x0A\x09\x20'
+
+  # [ Identifier ] #
+  identifier_head: "A-Za-z_\
+    \\x{00A8}\\x{00AA}\\x{00AD}\\x{00AF}\
+    \\x{00B2}-\\x{00B5}\\x{00B7}-\\x{00BA}\\x{00BC}-\\x{00BE}\
+    \\x{00C0}-\\x{00D6}\\x{00D8}-\\x{00F6}\\x{00F8}-\\x{00FF}\
+    \\x{0100}-\\x{02FF}\\x{0370}-\\x{167F}\\x{1681}-\\x{180D}\
+    \\x{180F}-\\x{1DBF}\\x{1E00}-\\x{1FFF}\\x{200B}-\\x{200D}\
+    \\x{202A}-\\x{202E}\\x{203F}-\\x{2040}\\x{2054}\
+    \\x{2060}-\\x{206F}\\x{2070}-\\x{20CF}\\x{2100}-\\x{218F}\
+    \\x{2460}-\\x{24FF}\\x{2776}-\\x{2793}\\x{2C00}-\\x{2DFF}\
+    \\x{2E80}-\\x{2FFF}\\x{3004}-\\x{3007}\\x{3021}-\\x{302F}\
+    \\x{3031}-\\x{303F}\\x{3040}-\\x{D7FF}\\x{F900}-\\x{FD3D}\
+    \\x{FD40}-\\x{FDCF}\\x{FDF0}-\\x{FE1F}\\x{FE30}-\\x{FE44}\
+    \\x{FE47}-\\x{FFFD}\
+    \\x{10000}-\\x{1FFFD}\\x{20000}-\\x{2FFFD}\\x{30000}-\\x{3FFFD}\
+    \\x{40000}-\\x{4FFFD}\\x{50000}-\\x{5FFFD}\\x{60000}-\\x{6FFFD}\
+    \\x{70000}-\\x{7FFFD}\\x{80000}-\\x{8FFFD}\\x{90000}-\\x{9FFFD}\
+    \\x{A0000}-\\x{AFFFD}\\x{B0000}-\\x{BFFFD}\\x{C0000}-\\x{CFFFD}\
+    \\x{D0000}-\\x{DFFFD}\\x{E0000}-\\x{EFFFD}"
+  identifier_character: "0-9\
+    \\x{0300}-\\x{036F}\\x{1DC0}-\\x{1DFF}\
+    \\x{20D0}-\\x{20FF}\\x{FE20}-\\x{FE2F}\
+    {{identifier_head}}"
+
+  # [ Operator ] #
+  operator_head: "\\/=\\-+!*%<>&|^~?\
+    \\x{00A1}-\\x{00A7}\\x{00A9}\\x{00AB}\\x{00AC}\\x{00AE}\
+    \\x{00B0}-\\x{00B1}\\x{00B6}\\x{00BB}\\x{00BF}\\x{00D7}\\x{00F7}\
+    \\x{2016}-\\x{2017}\\x{2020}-\\x{2027}\\x{2030}-\\x{203E}\
+    \\x{2041}-\\x{2053}\\x{2055}-\\x{205E}\\x{2190}-\\x{23FF}\
+    \\x{2500}-\\x{2775}\\x{2794}-\\x{2BFF}\\x{2E00}-\\x{2E7F}\
+    \\x{3001}-\\x{3003}\\x{3008}-\\x{3020}\\x{3030}"
+  operator_character: "{{operator_head}}\
+    \\x{0300}-\\x{036F}\\x{1DC0}-\\x{1DFF}\\x{20D0}-\\x{20FF}\
+    \\x{FE00}-\\x{FE0F}\\x{FE20}-\\x{FE2F}\\x{E0100}-\\x{E01EF}"
+
+  # [ Patterns ] #
+
+  # Reserved words can be declared as an identifier if surrounded by '`'.
+  #  Moreover at call-site, backticks can be omitted.
+  #  However at file-level, this is not the case even if declared with arguments.
+  #
+  # Selected words from:
+  #  swift/test/SourceKit/CodeComplete/complete_override.swift.response
+  #  swift/utils/gyb_syntax_support/Token.py
+  reserved_word: |-
+    (?x:
+      (?=
+        (?:[^.`]|^)
+        \b(
+          actor|associatedtype|async|class|convenience|deinit|distributed|dynamic|
+          enum|extension|fileprivate|final|func|import|indirect|infix|init|
+          internal|isolated|lazy|let|mutating|nonisolated|nonmutating|open|operator|
+          optional|override|postfix|precedencegroup|prefix|private|protocol|public|
+          required|static|struct|subscript|typealias|unowned|var|weak|
+          # Manually selected words
+          guard|if|switch
+        )\b(?!\s*[:(])
+        |@
+      )
+    )
+  file_scope_word: (?=\b(import|protocol|extension|operator|precedencegroup)\b)
+
+  identifier: '[`]?\b[{{identifier_head}}][{{identifier_character}}]*?\b[`]?'
+  non_reserved_identifier: (?:(?!{{reserved_word}}){{identifier}})
+  identifier_lookahead: (?=\s+?{{identifier}})
+
+  operator: '[{{operator_head}}](?!/)(?:([{{operator_character}}]*)?([.])?)*'
+  dot_operator: (?![{{operator_character}}])[.][.{{operator_character}}]+
+  operator_negative_lookahead: (?![.{{operator_character}}])
+
+  access_levels: '\b(?:(private)|(fileprivate)|(internal)|(public)|(open))\b'
+
+  generic_clause_chars: '{{identifier_character}}{{whitespaces}}<:&\.,\s`>'
+  generic_clause_chars_call_site: '{{generic_clause_chars}}\?\!\(\)'
+
+#
+# Aside from contexts in Prototypes, a few contexts have a variant with '-pop' suffix:
+# - The ones with the suffix pop themselves (so for pushing).
+# - The ones without the suffix don't pop itself (so for including).
+# So '-pop' variants should not be included unless it is an intended behavior.
+#
+contexts:
+  ### [ Main ] ##########################################################################
+
+  prototype:
+    - include: comments
+
+  main:
+    - meta_include_prototype: false
+    - match: ''
+      push: [statements, shebang]
+
+  shebang:
+    - meta_include_prototype: false
+    - match: ^\#!
+      scope: punctuation.definition.comment.swift
+      set:
+        - meta_include_prototype: false
+        - meta_scope: comment.line.shebang.swift
+        - match: \bswift\b
+          scope: constant.language.shebang.swift
+        - match: \n
+          pop: 1
+    - match: ^|(?=\S)
+      pop: 1
+
+  # Scope groupings are the rough categories to make a set of contexts reusable easily.
+  # Each basically belongs to the deepest scope it can appear.
+  statements:
+    - include: statements-scope-file
+    - include: statements-scope-type-declaration
+    - include: statements-scope-block
+    - include: statements-scope-parameter
+    - include: statements-scope-any
+
+  statements-scope-file:
+    - include: declaration-import
+    - include: declaration-protocol
+    - include: declaration-extension
+    - include: declaration-operator
+    - include: declaration-precedencegroup
+
+  statements-scope-type-declaration:
+    - include: declaration-init-deinit
+    - include: declaration-subscript
+    - include: modifier-class
+    - include: modifier-storage
+    - include: modifier-access-level
+    - include: modifier-mutation
+    - include: modifier-actor-isolation
+    - include: modifier-reference-counting
+    - include: modifier-types
+
+  statements-scope-block:
+    - include: declaration-constant
+    - include: declaration-variable
+    - include: declaration-typealias
+    - include: declaration-func
+    - include: declaration-enum
+    - include: declaration-struct
+    - include: declaration-class
+    - include: declaration-actor
+    - include: keyword-declarations
+
+  statements-scope-parameter:
+    - include: modifier-types
+    - include: modifier-for-parameter
+
+  statements-scope-any:
+    - include: punctuations
+    - include: literals
+    - include: types
+    # Keywords
+    - include: keyword-operators
+    - include: keyword-control-flows
+    # Variables
+    - include: variable-builtins
+    # Scoped Expressions
+    - include: parameter-list
+    - include: inner-code-block
+    - include: square-brackets
+    # Generics
+    - include: generic-parameter-clause-call
+    - include: generic-where-clause
+    # Operator
+    - include: operator-builtins
+    - include: operator-sigils
+    - include: operator-custom
+    # Compiler
+    - include: compiler-availability
+    - include: compiler-directive-clause
+    - include: compiler-literals
+    # Attribute
+    - include: attribute-builtins
+    - include: attribute-custom
+    # Support
+    - include: identifier-support
+    - include: function-call
+    # Consume all the remaining identifiers
+    # - match: (?:{{non_reserved_identifier}})(?!\s*\()
+    #   scope: invalid.illegal.swift # uncomment to see what's being consumed
+
+  ### [ Prototypes ] ####################################################################
+
+  # Memo:
+  # When using ***-pop in Prototypes, every chars in a context has to be consumed until
+  # the position ***-pop is expected to start matching.
+  # Otherwise, it will pop halfway unexpectedly.
+
+  else-pop:
+    - match: (?=\S)
+      pop: 1
+  # To determine the cause of an unintended else-pop, a match below is quite useful:
+  # - match: '.'
+  #   scope: invalid.swift
+
+  immediately-pop:
+    - match: ''
+      pop: 1
+
+  # access-level-pop, reserved-word-pop are included inside a scope to
+  # prevent unintended meta-scope nest and keep matching when closing bracket is missing
+  # by look-ahead words that cannot appear inside the scope.
+
+  # Note:
+  # Those "invalid..." scopes should be commented out or removed in the end.
+
+  access-level-pop:
+    - match: ({{access_levels}})(?!\s*[:(])
+      scope: invalid.illegal.unexpected-word.swift
+      pop: 1
+
+  reserved-word-pop:
+    - match: ({{reserved_word}})
+      scope: invalid.illegal.unexpected-word.swift
+      pop: 1
+
+  file-scope-word-pop:
+    - match: ({{file_scope_word}})
+      scope: invalid.illegal.unexpected-word.swift
+      pop: 1
+
+  ### [ Comments ] ######################################################################
+
+  comments:
+    - include: comment-line-doc
+    - include: comment-line
+    - include: comment-block-doc
+    - include: comment-block
+
+  comment-line-doc:
+    - match: ///
+      scope: punctuation.definition.comment.begin.swift
+      push:
+        - meta_scope: comment.line.documentation.swift
+        - match: $
+          pop: 1
+        - include: Swift - Markup.sublime-syntax
+
+  comment-line:
+    - match: (//)\s*(?:(MARK:.*)|.*)$
+      captures:
+        0: comment.line.double-slash.swift
+        1: punctuation.definition.comment.begin.swift
+        2: meta.toc-list.swift comment.line.swift
+
+  comment-block-doc:
+    - match: /\*\*
+      scope: punctuation.definition.comment.begin.swift
+      push:
+        - meta_scope: comment.block.documentation.swift
+        - match: \*/(?!.*?\*/)
+          scope: punctuation.definition.comment.end.swift
+          pop: 1
+        - include: Swift - Markup.sublime-syntax
+
+  comment-block:
+    - match: /\*
+      scope: punctuation.definition.comment.begin.swift
+      push:
+        - meta_scope: comment.block.swift
+        - match: \*/(?!.*?\*/)
+          scope: punctuation.definition.comment.end.swift
+          pop: 1
+
+  ### [ Punctuations ] ##################################################################
+
+  # ':' is not generically consumed here to distinguish
+  # type-annotation, conformance, key-value, ternary-conditional and others.
+  punctuations:
+    - match: \.{{operator_negative_lookahead}}
+      scope: punctuation.accessor.dot.swift
+    - match: ','
+      scope: punctuation.separator.continuation.swift
+    - match: ->
+      scope: punctuation.separator.annotation.return-arrow.swift
+    - match: ';'
+      scope: punctuation.terminator.swift
+    - match: \(\)
+      scope: variable.other.tuple.swift
+
+  ### [ Literals ] ######################################################################
+
+  literals:
+    - include: floating-point-literal
+    - include: integer-literal
+    - include: extended-string-literal
+    - include: string-literal
+    - include: boolean-literal
+    - include: nil-literal
+
+  integer-literal:
+    # binary-literal
+    - match: \b(0b)([01][01_]*)\b
+      captures:
+        0: meta.number.integer.binary.swift
+        1: constant.numeric.base.swift
+        2: constant.numeric.value.swift
+    # octal-literal
+    - match: \b(0o)([0-7][0-7_]*)\b
+      captures:
+        0: meta.number.integer.octal.swift
+        1: constant.numeric.base.swift
+        2: constant.numeric.value.swift
+    # hexadecimal-literal
+    - match: \b(0x)([0-9a-fA-F][0-9a-fA-F_]*)\b
+      captures:
+        0: meta.number.integer.hexadecimal.swift
+        1: constant.numeric.base.swift
+        2: constant.numeric.value.swift
+    # decimal-literal
+    - match: \b[0-9][0-9_]*\b
+      scope: meta.number.integer.decimal.swift constant.numeric.value.swift
+
+  floating-point-literal:
+    - match: |-
+        (?x:\b
+          ([0-9][0-9_]*)
+          (?:(\.)|([eE][-+]?))
+          (
+            (?:[0-9][0-9_]*)?
+            (?:[eE][-+]?[0-9][0-9_]*)?
+          )
+        \b)
+      captures:
+        0: meta.number.float.decimal.swift
+        1: constant.numeric.value.swift
+        2: punctuation.separator.decimal.swift
+        3: constant.numeric.value.swift
+        4: constant.numeric.value.swift
+    # hexadecimal-literal
+    - match: |-
+        (?x:\b
+          (0x[0-9a-fA-F][0-9a-fA-F_]*)
+          (\.)?
+          ([0-9a-fA-F][0-9a-fA-F_]*)?
+          ([pP][-+]?[0-9][0-9_]*)
+        \b)
+      captures:
+        0: meta.number.float.hexadecimal.swift
+        1: constant.numeric.base.swift
+        2: punctuation.separator.decimal.swift
+        3: constant.numeric.value.swift
+        4: constant.numeric.value.swift
+
+  string-literal:
+    # multiline-string-literal
+    - match: (""")(.*?(?="""|$))
+      captures:
+        1: punctuation.definition.string.begin.swift
+        2: invalid.illegal.content-must-begin-on-a-new-line.swift
+      push:
+        - meta_scope: meta.string.swift string.quoted.double.block.swift
+        - match: ([^{{inline_space}}]*)(""")
+          captures:
+            1: invalid.illegal.closing-delimiter-must-begin-on-a-new-line.swift
+            2: punctuation.definition.string.end.swift
+          pop: 1
+        - include: string-literal-content
+        - match: \\{{inline_space}}*{{line_break}}
+          scope: punctuation.separator.continuation.line.swift
+
+        # [ TODO: escaped newline at the last line is not allowed ] #
+        # How can we capture \ on the last line, before the closing delimiter?
+        # Or maybe this is overkill as a syntax's feature.
+
+        # \ is invalid if it's not at EOL
+        - match: (?=[^\s]+?\s*\\\s*[^(\s]+?)(?!\s*$)
+          push:
+            - match: \\
+              scope: invalid.illegal.invalid-escape-sequence.swift
+              pop: 1
+    # string-literal
+    - match: \"
+      scope: punctuation.definition.string.begin.swift
+      push:
+        - meta_scope: meta.string.swift string.quoted.double.swift
+        - match: \"
+          scope: punctuation.definition.string.end.swift
+          pop: 1
+        - match: '{{line_break}}'
+          scope: invalid.illegal.unterminated-string-literal.swift
+          pop: 1
+        - include: string-literal-content
+        - match: \\
+          scope: invalid.illegal.invalid-escape-sequence.swift
+
+  string-literal-content:
+    # escaped-character
+    - match: \\[0\\tnr"']
+      scope: constant.character.escape.swift
+    # unicode-scalar-digits
+    - match: \\u\{([0-9a-fA-F]{1,8})\}
+      scope: constant.character.escape.unicode.swift
+      captures:
+        1: constant.numeric.value.swift
+    # interpolated-text-item
+    - match: \\\(
+      scope: punctuation.section.interpolation.begin.swift
+      push:
+        - clear_scopes: 1
+        - meta_scope: meta.interpolation.swift
+        - include: statements-scope-any
+        - match: \)
+          scope: punctuation.section.interpolation.end.swift
+          pop: 1
+
+  extended-string-literal:
+    # multiline extended-string-literal
+    - match: (\#+)(""")(.*?(?="""|$))
+      captures:
+        1: punctuation.definition.annotation.begin.swift
+        2: punctuation.definition.string.begin.swift
+        3: invalid.illegal.content-must-begin-on-a-new-line.swift
+      push:
+        - meta_scope: meta.string.swift string.quoted.double.block.swift
+        - match: ([^{{inline_space}}]*)(""")(#+)
+          captures:
+            1: invalid.illegal.closing-delimiter-must-begin-on-a-new-line.swift
+            2: punctuation.definition.string.end.swift
+            3: punctuation.definition.annotation.end.swift
+          pop: 1
+        - include: extended-string-literal-content
+        - match: '\\{{inline_space}}*{{line_break}}'
+          scope: punctuation.separator.continuation.line.swift
+        - match: (?=[^\s]+?\s*\\#\s*[^(\s]+?)(?!\s*$)
+          push:
+            - match: \\#
+              scope: invalid.illegal.invalid-escape-sequence.swift
+              pop: 1
+    # extended-string-literal
+    - match: (#+)(")
+      captures:
+        1: punctuation.definition.annotation.begin.swift
+        2: punctuation.definition.string.begin.swift
+      push:
+        - meta_scope: meta.string.swift string.quoted.double.swift
+        - match: (")(#+)
+          captures:
+            1: punctuation.definition.string.end.swift
+            2: punctuation.definition.annotation.end.swift
+          pop: 1
+        - match: '{{line_break}}'
+          scope: invalid.illegal.unterminated-string-literal.swift
+          pop: 1
+        - include: extended-string-literal-content
+
+  extended-string-literal-content:
+    # escaped-character
+    - match: \\#+[0\\tnr"']
+      scope: constant.character.escape.swift
+    # unicode-scalar-digits
+    - match: \\#+u\{([0-9a-fA-F]{1,8})\}
+      scope: constant.character.escape.unicode.swift
+      captures:
+        1: constant.numeric.value.swift
+    # interpolated-text-item
+    - match: \\#+\(
+      scope: punctuation.section.interpolation.begin.swift
+      push:
+        - clear_scopes: 1
+        - meta_scope: meta.interpolation.swift
+        - include: statements-scope-any
+        - match: \)
+          scope: punctuation.section.interpolation.end.swift
+          pop: 1
+
+  boolean-literal:
+    - match: \b(true|false)\b
+      scope: constant.language.boolean.swift
+
+  nil-literal:
+    - match: \bnil\b
+      scope: constant.language.null.swift
+
+  ### [ Operators ] #####################################################################
+
+  operator-builtins:
+    # swift/stdlib/public/core/Policy.swift
+    - match: |-
+        (?x:
+          (?:
+            # SIMD
+              (\.(?:==|!=|<(?!<)=?|>(?!>)=?))
+            | (\.(?:[&|^]=?))
+            | (\.!)
+            # Masked Arithmetic (with Assignment)
+            | (&[+\-*]=?)
+            # Arithmetic (with Assignment)
+            | ([+\-*\/%]=?)
+            # Pattern Matching
+            | (~=)
+            # Logical
+            | (!(?=[^=])(?!$)|&&|\|\|)
+            # Bit Shift (with Assignment)
+            | (&?(?:<<|>>)=?)
+            # Bitwise (with Assignment)
+            | ([&|^]=?)
+            | (~)
+            # Identity
+            | (===|!==)
+            # Comparison
+            | (==|!=|<(?!<)=?|>(?!>)=?)
+            # Range Expressions
+            | (\.\.[.<])
+            # Nil-Coalescing
+            | \s(\?\?)
+          )
+          {{operator_negative_lookahead}}
+        )
+      captures:
+        1: keyword.operator.simd.comparison.swift
+        2: keyword.operator.simd.bitwise.swift
+        3: keyword.operator.simd.logical.swift
+        4: keyword.operator.arithmetic.overflow.swift
+        5: keyword.operator.arithmetic.swift
+        6: keyword.operator.pattern-matching.swift
+        7: keyword.operator.logical.swift
+        8: keyword.operator.bitshift.swift
+        9: keyword.operator.bitwise.swift
+        10: keyword.operator.bitwise.swift
+        11: keyword.operator.identity.swift
+        12: keyword.operator.comparison.swift
+        13: keyword.operator.range.swift
+        14: keyword.operator.nil-coalescing.swift
+
+    # Unary
+    - match: ([+\-])(?=\.?{{identifier}})
+      captures:
+        1: keyword.operator.arithmetic.swift
+
+    # conditional-operator (ternary conditional)
+    # Note: without a preceded \s, it'll be interpreted as an optional operator.
+    - match: (\s+|^)(?=\?(?!\?))
+      push:
+        - match: \?
+          scope: keyword.operator.ternary-conditional.swift
+        # Consume ':' with statements first - then remained : is ternary.
+        # [ TODO: Not checked comprehensively yet, there might be ':' without any scope. ] #
+        - include: statements-scope-any
+        - match: ':'
+          scope: keyword.operator.ternary-conditional.swift
+          pop: 1
+        - include: reserved-word-pop
+
+    # Optional
+    - match: (?:(\?)|(\!))(?=\s*[?!.,:)\];\w]|\s|$)
+      captures:
+        1: keyword.operator.optional.swift
+        2: keyword.operator.implicitly-unwrapped-optional.swift
+
+    # Assignment
+    - match: =
+      scope: keyword.operator.assignment.swift
+
+  operator-sigils:
+    # implicit-parameter-name:
+    - match: \$([0-9]+)\b
+      captures:
+        0: keyword.operator.implicit-parameter-name.swift
+        1: meta.number.integer.decimal.swift constant.numeric.value.swift
+
+    # key-path-expression
+    - match: (\\)(?=.*?\.)
+      captures:
+        1: keyword.operator.key-path.swift
+
+    # property-wrapper-projection
+    - match: (\$)(?={{identifier}})
+      captures:
+        1: keyword.operator.property-wrapper-projection.swift
+
+  operator-custom:
+    # operator
+    - match: '{{operator}}'
+      captures:
+        0: variable.function.custom-operator.swift
+        2: invalid.illegal.dot-not-allowed.swift
+    # dot-operator
+    - match: '{{dot_operator}}'
+      scope: variable.function.custom-dot-operator.swift
+
+  ### [ Variables ] #####################################################################
+
+  variable-builtins:
+    # self-expression, superclass-expression
+    - match: \b(self|super)\b
+      scope: variable.language.swift
+
+    # wildcard-expression
+    - match: (?:^|\s)(\_)(?=[\s,:])
+      captures:
+        1: variable.language.wildcard-expression.swift
+
+  ### [ Types ] #########################################################################
+
+  types:
+    # protocol-composition-type
+    - match: |-
+        (?x:
+          (?=
+            # Weak speculation that both protocols are title-cased, so it's
+            # not a bit wise expression (variables should begin lower-cased).
+            [A-Z][{{identifier_character}}]*
+            \s*&\s*
+            [A-Z][{{identifier_character}}]*
+          )
+        )
+      push:
+        - match: \&
+          scope: keyword.operator.protocol-composition-type.swift
+          pop: 1
+        - include: generic-parameter-clause-declaration
+        - include: identifier-support
+
+    # metatype-type
+    - match: \b(?:(Type)|(Protocol))\b(?!`)
+      captures:
+        1: storage.type.metatype.type.swift
+        2: storage.type.metatype.protocol.swift
+
+    # any-type
+    - match: \bAny\b(?!`)
+      scope: storage.type.any.swift
+
+    # self-type
+    - match: \bSelf\b(?!`)
+      scope: storage.type.self.swift
+
+  ### [ Keywords ] ######################################################################
+
+  keyword-operators:
+    # try-operator
+    - match: \b(try(?![?!]))\b|(try)(?=\?)|\b(try)\b(?=\!)
+      captures:
+        1: keyword.control.exception.try.swift
+        2: keyword.control.exception.try.optional.swift
+        3: keyword.control.exception.try.forced.swift
+
+    # await-operator
+    - match: (\bawait\b\s+\btry\b[!?]?)|\b(await)\b
+      captures:
+        1: invalid.illegal.try-must-precede-await.swift
+        2: keyword.control.flow.await.swift
+
+    # type-casting-operator (is, as, as?, as!)
+    - match: \b(is)\b|\b(as)\b(?![?!])|(as)(?=\?)|\b(as)\b(?=\!)
+      captures:
+        1: keyword.operator.word.type-casting.is.swift
+        2: keyword.operator.word.type-casting.as.swift
+        3: keyword.operator.word.type-casting.as.optional.swift
+        4: keyword.operator.word.type-casting.as.forced.swift
+
+  keyword-control-flows:
+    # loop-statement
+    - match: \b(?:(for)|(while)|(repeat)|(in))\b
+      captures:
+        1: keyword.control.loop.for.swift
+        2: keyword.control.loop.while.swift
+        3: keyword.control.loop.repeat.swift
+        4: keyword.control.loop.in.swift
+
+    # branch-statement
+    - match: \b(?:(if)|(else\s+if)|(else))\b
+      captures:
+        1: keyword.control.conditional.if.swift
+        2: keyword.control.conditional.elseif.swift
+        3: keyword.control.conditional.else.swift
+
+    # guard-statement
+    - match: \b(guard)\b
+      captures:
+        1: keyword.control.conditional.guard.swift
+
+    # switch-statement
+    - match: \bswitch\b(?=\s+[{{identifier_character}}.]+)
+      scope: keyword.control.conditional.switch.swift
+      push:
+        - meta_scope: meta.block.swift
+        - match: \}
+          scope: punctuation.section.block.end.swift
+          pop: 1
+        - match: \{
+          scope: punctuation.section.block.begin.swift
+        - match: \b(?:(case)|(default))\b
+          captures:
+            1: keyword.control.conditional.case.swift
+            2: keyword.control.conditional.default.swift
+          push:
+            - match: ':'
+              scope: punctuation.separator.swift
+              pop: 1
+            - match: \b(?:(var)|(let))\b
+              captures:
+                1: keyword.declaration.var.swift
+                2: keyword.declaration.let.swift
+            - match: (\.)({{identifier}})
+              captures:
+                1: punctuation.accessor.dot.swift
+                2: constant.other.swift
+            - include: parameter-list
+            - include: punctuations
+            - include: statements-scope-block
+            - include: statements-scope-any
+        - include: statements-scope-block
+        - include: statements-scope-any
+        - match: '{{identifier}}'
+          # scope: invalid.swift
+        - include: else-pop
+
+    - match: \b(?:(switch)|(default))\b
+      captures:
+        1: keyword.control.conditional.switch.swift
+        2: keyword.control.conditional.default.swift
+
+    - match: \b(case)\b(?:\s+(\.)({{identifier}})(:))?
+      captures:
+        1: keyword.control.conditional.case.swift
+        2: punctuation.accessor.dot.swift
+        3: constant.other.swift
+        4: punctuation.separator.swift
+
+    # control-transfer-statement
+    - match: \b(?:(break)|(continue)|(fallthrough)|(return)|(throw))\b
+      captures:
+        1: keyword.control.flow.break.swift
+        2: keyword.control.flow.continue.swift
+        3: keyword.control.flow.fallthrough.swift
+        4: keyword.control.flow.return.swift
+        5: keyword.control.flow.throw.swift
+
+    # defer-statement
+    - match: \b(defer)\b
+      captures:
+        1: keyword.control.flow.defer.swift
+
+    # do-statement
+    - match: \b(?:(do)|(catch))\b
+      captures:
+        1: keyword.control.flow.do.swift
+        2: keyword.control.exception.catch.swift
+
+  # Keywords used in declarations
+  keyword-declarations:
+    - match: \bthrows\b
+      scope: keyword.declaration.throws.swift
+    - match: \brethrows\b
+      scope: keyword.declaration.rethrows.swift
+    - match: \basync\b
+      scope: keyword.declaration.async.swift
+
+    # getter-setter
+    - match: \bget\b
+      scope: keyword.declaration.get.swift
+    - match: \bset\b
+      scope: keyword.declaration.set.swift
+
+    # willSet-didSet
+    - match: \bwillSet\b
+      scope: keyword.declaration.willSet.swift
+    - match: \bdidSet\b
+      scope: keyword.declaration.didSet.swift
+
+    # enumeration
+    - match: \bindirect\b
+      scope: storage.modifier.indirect.swift
+    # - match: \bcase\b
+    #   scope: keyword.declaration.case.swift
+
+    # protocol
+    - match: \b(associatedtype)\b(?:\s+({{identifier}})\s*(:))?
+      captures:
+        1: keyword.declaration.associatedtype.swift
+        2: support.other.associatedtype.swift
+        3: punctuation.separator.annotation.type-annotation.swift
+
+  ### [ Modifiers ] #####################################################################
+
+  modifier-class:
+    - match: |-
+        (?x:
+          \b(?:
+            (?:(class)(?=\s+(?:var|func)\b))
+          | (convenience) | (dynamic)  | (final)
+          | (optional)    | (override) | (required)
+          )\b
+          (?=\s|$)
+        )
+      captures:
+        1: storage.modifier.class.swift
+        2: storage.modifier.convenience.swift
+        3: storage.modifier.dynamic.swift
+        4: storage.modifier.final.swift
+        5: storage.modifier.optional.swift
+        6: storage.modifier.override.swift # also for protocol
+        7: storage.modifier.required.swift
+
+  modifier-storage:
+    - match: (?:\b(lazy)\b|\b(static)\b)(?=\s|$)
+      captures:
+        1: storage.modifier.lazy.swift
+        2: storage.modifier.static.swift
+
+  modifier-access-level:
+    - match: |-
+        (?x:
+          \b(?:{{access_levels}})\b
+          (?:\s*(\()\s*\b(?:(set))\b\s*(\)))?
+          (?=\s|$)
+        )
+      captures:
+        1: storage.modifier.access-level.private.swift
+        2: storage.modifier.access-level.fileprivate.swift
+        3: storage.modifier.access-level.internal.swift
+        4: storage.modifier.access-level.public.swift
+        5: storage.modifier.access-level.open.swift
+        6: punctuation.section.parens.begin.swift
+        7: variable.parameter.setter-access-level.swift
+        8: punctuation.section.parens.end.swift
+
+  modifier-mutation:
+    - match: \b((mutating)|(nonmutating))\b(?=\s|$)
+      captures:
+        1: storage.modifier.mutation.mutating.swift
+        2: storage.modifier.mutation.nonmutating.swift
+
+  modifier-actor-isolation:
+    - match: \b(nonisolated)\b(?=\s|$)
+      captures:
+        1: storage.modifier.actor-isolation.nonisolated.swift
+
+  modifier-reference-counting:
+    - match: |-
+        (?x:
+          (?:
+            \b(unowned)\b(?:\s*\(\s*((?:un)?safe)\s*\))?
+          | \b(weak)\b
+          )
+          (?=\s|$)
+        )
+      captures:
+        1: storage.modifier.unowned.swift
+        2: storage.modifier.unowned.swift
+        3: storage.modifier.weak.swift
+
+  modifier-types:
+    # opaque-type
+    - match: (?:\s|^)(some)(?=\s)
+      captures:
+        1: storage.modifier.opaque.swift
+
+    # existential-type
+    - match: (?:\s|^)(any)(?=\s)
+      captures:
+        1: storage.modifier.existential.swift
+
+  modifier-for-parameter:
+    # in-out-expression
+    - match: |-
+        (?x:
+          \b(inout)\b
+        | (&)(?={{identifier}})
+        )
+      captures:
+        1: storage.modifier.inout.swift # Valid only inside parens as an argument type
+        2: keyword.operator.inout.swift # Valid only inside parens at call-site
+
+    # actor-isolation
+    - match: \b(isolated)\b(?=\s|$)
+      captures:
+        1: storage.modifier.actor-isolation.isolated.swift
+
+  ### [ Scoped Expressions ] ############################################################
+
+  parameter-list:
+    - match: \(
+      scope: punctuation.section.parens.begin.swift
+      push:
+        - meta_scope: meta.function.parameters.swift
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - include: parameter-list-body
+        # - match: \s
+        # - match: \w
+        # - match: '[^)]'
+        #   scope: invalid.illegal.missing-closing-paren.swift
+        #   pop: 1
+
+  parameter-list-pop:
+    - include: parameter-list
+    - include: immediately-pop
+    # - match: (?=\s)
+    #   pop: 1
+    # - include: else-pop
+
+  # Note:
+  # Almost every reserved keywords are valid as parameter-name, except "inout".
+  parameter-list-body:
+    # argument-list
+    - match: |-
+        (?x:
+          \s*\b(_)\b          \s+ ({{identifier}}) \s* (:) # _ label:
+        | \s*({{identifier}}) \s+ ({{identifier}}) \s* (:) # label label:
+        | \s*({{identifier}}) \s*                      (:) # label:
+        | \s*\b(_)\b          \s*           (?:(,)|(?=\)))  # _, or _)
+        )
+      captures:
+        1:
+          variable.parameter.external-parameter-name.swift
+          variable.language.wildcard.swift
+        2: variable.other.local-parameter-name.swift
+        3: punctuation.separator.annotation.type-annotation.swift
+        4: variable.parameter.external-parameter-name.swift
+        5: variable.other.local-parameter-name.swift
+        6: punctuation.separator.annotation.type-annotation.swift
+        7: variable.parameter.external-parameter-name.swift
+        8: punctuation.separator.annotation.type-annotation.swift
+        9:
+          variable.parameter.external-parameter-name.swift
+          variable.language.wildcard.swift
+        10: punctuation.separator.annotation.type-annotation.swift
+    # fallback
+    - match: ':'
+      scope: punctuation.separator.annotation.type-annotation.swift
+    # variadic parameter
+    - match: (\.{3})(?=\s*[{{line_break}},)])
+      captures:
+        1: keyword.operator.variadic.swift
+
+    - include: keyword-declarations
+    - include: statements-scope-parameter
+    - include: declaration-constant
+    - include: declaration-variable
+    - include: statements-scope-any
+    - match: '{{identifier}}'
+    - include: else-pop
+
+  # code-block that is allowed to declare access levels inside.
+  code-block:
+    - match: \{
+      scope: punctuation.section.block.begin.swift
+      set:
+        - meta_scope: meta.block.swift
+        - match: \}
+          scope: punctuation.section.block.end.swift
+          pop: 1
+        - include: statements-scope-type-declaration
+        - include: statements-scope-block
+        - include: statements-scope-any
+        - include: else-pop
+    - include: immediately-pop
+    # - include: else-pop
+
+  # code-block that is not allowed to declare access levels inside.
+  inner-code-block:
+    - match: \{
+      scope: punctuation.section.block.begin.swift
+      push:
+        - meta_scope: meta.block.swift
+        - match: \}
+          scope: punctuation.section.block.end.swift
+          pop: 1
+        # implicit-parameter-name
+        - match: \$([0-9]+)\b
+          captures:
+            0: keyword.operator.implicit-parameter-name.swift
+            1: meta.number.integer.decimal.swift constant.numeric.value.swift
+        - include: access-level-pop
+        - include: statements-scope-block
+        - include: statements-scope-any
+        - include: file-scope-word-pop
+        - match: '{{identifier}}'
+        - include: else-pop
+
+  inner-code-block-pop:
+    - include: inner-code-block
+    - include: immediately-pop
+    # - include: else-pop
+    # - include: access-level-pop
+
+  square-brackets:
+    - match: (\[)(\])
+      captures:
+        0: meta.brackets.swift
+        1: punctuation.section.brackets.begin.swift
+        2: punctuation.section.brackets.end.swift
+    - match: (?=\[)
+      scope: punctuation.section.brackets.begin.swift
+      push:
+        - meta_scope: meta.brackets.swift
+        - match: \]
+          scope: punctuation.section.brackets.end.swift
+          pop: 1
+        - match: (\[)([a-z][{{identifier_character}}]+?)(:) # value[keyPath: ...]
+          captures:
+            1: punctuation.section.brackets.begin.swift
+            2: variable.parameter.swift
+            3: punctuation.separator.key-value.swift
+        - match: ':'
+          scope: punctuation.separator.key-value.swift
+        - match: \[
+          scope: punctuation.section.brackets.begin.swift
+        - include: modifier-reference-counting # for capture-list
+        - include: statements-scope-any
+        - include: file-scope-word-pop
+
+  square-brackets-pop:
+    - include: square-brackets
+    - include: immediately-pop
+    # - include: else-pop
+
+  ### [ Declarations ] ##################################################################
+
+  # Note:
+  # To use an arbitrary letter in Symbol List (and to replicate Xcode's symbol list),
+  # some declarations are given hacky scope name:
+  #   - keyword.symbol-list.swift - for type names that ST doesn't support.
+  #   - meta.entity.name. ...     - for properties and function types.
+  #
+  # There might be a smarter way or this should be avoided first of all.
+
+  # [ TODO: In Goto Symbol, highlight subscript with red color ] #
+
+  # Common trailing expressions of a declaration
+  declaration-trailing-signature:
+    - match: (?={)
+      pop: 1
+    - match: (:)
+      scope: punctuation.separator.annotation.conformance.swift
+    - match: (?=\bwhere\b)
+      push: generic-where-clause-pop
+    - include: generic-parameter-clause-call
+    - include: punctuations
+    - include: keyword-declarations
+    - include: modifier-types
+    - include: operator-builtins
+    - include: types
+    - include: identifier-support
+    - match: '{{non_reserved_identifier}}'
+      scope: support.other.swift
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-import:
+    - match: \bimport\b
+      scope: keyword.control.import.swift
+      push:
+        - meta_scope: meta.import.swift
+        - match: $
+          pop: 1
+        - match: |-
+            (?x:
+              \b(?:
+                (typealias)|(struct)|(class)|(enum)|(protocol)|
+                (let)|(var)|(func)
+              )\b
+            )
+          captures:
+            1: keyword.declaration.typealias.swift
+            2: keyword.declaration.struct.swift
+            3: keyword.declaration.class.swift
+            4: keyword.declaration.enum.swift
+            5: keyword.declaration.protocol.swift
+            6: keyword.declaration.let.swift
+            7: keyword.declaration.var.swift
+            8: keyword.declaration.function.swift
+        - match: \.
+          scope: punctuation.accessor.dot.swift
+        - include: identifier-support
+        - match: '{{identifier}}'
+          scope: support.module.swift
+
+  declaration-constant:
+    - match: \b(let)\b(?:\s+)?({{identifier}})?(?:\s*(:))?
+      captures:
+        0: meta.let.swift
+        1: keyword.declaration.let.swift
+        2: meta.entity.name.let.swift variable.other.constant.swift
+        3: punctuation.separator.annotation.type-annotation.swift
+
+  declaration-variable:
+    - match: \b(var)\b(?:\s+)?({{identifier}})?(?:\s*(:))?
+      captures:
+        0: meta.var.swift
+        1: keyword.declaration.var.swift
+        2: meta.entity.name.var.swift variable.other.swift
+        3: punctuation.separator.annotation.type-annotation.swift
+
+  declaration-typealias:
+    - match: \btypealias\b
+      scope: keyword.declaration.typealias.swift
+      push:
+        - meta_scope: meta.typealias.swift
+        - match: ({{non_reserved_identifier}})
+          scope: keyword.symbol-list.swift entity.name.typealias.swift
+          pop: 1
+        - include: else-pop
+
+  declaration-func:
+    - match: \b(func)\b\s*
+      captures:
+        1: keyword.declaration.function.swift
+      push:
+        - - meta_scope: meta.function.swift
+          - include: immediately-pop
+        - inner-code-block-pop
+        - declaration-trailing-signature
+        - - meta_content_scope: meta.entity.name.function.swift
+          - include: immediately-pop
+        - parameter-list-pop
+        - generic-parameter-clause-declaration-pop
+        - declaration-func-name
+
+  # Alternative context structure to capture a code-block as a "body":
+  #
+  # declaration-func-body:
+  #   - match: ''
+  #     set:
+  #       - - meta_content_scope: meta.function.body.swift
+  #         - include: immediately-pop
+  #       - code-block
+  #
+  # Replace declaration-func: > push: > code-block with "declaration-func-body",
+  # or insert the match in-place.
+  # This is left for future reference.
+
+  declaration-func-name:
+    - match: |-
+        (?x:
+          ({{operator}}|{{dot_operator}})
+          # Distinguish a boundary between operator and generic clause
+          (?=<\s*?[{{identifier_character}}]+)
+        )
+      captures:
+        1: entity.name.function.swift
+        3: invalid.illegal.dot-not-allowed.swift
+      pop: 1
+    - match: ({{operator}}|{{dot_operator}})
+      captures:
+        1: entity.name.function.swift
+        3: invalid.illegal.dot-not-allowed.swift
+      pop: 1
+    - match: ({{non_reserved_identifier}})
+      scope: entity.name.function.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-enum:
+    - match: \benum\b
+      scope: keyword.declaration.enum.swift
+      push:
+        - - meta_scope: meta.enum.swift
+          - include: immediately-pop
+        - declaration-enum-body
+        - declaration-trailing-signature
+        - generic-parameter-clause-declaration-pop
+        - declaration-enum-name
+
+  declaration-enum-body:
+    - match: \{
+      scope: punctuation.section.block.begin.swift
+      set:
+        - meta_scope: meta.block.swift
+        - match: \}
+          scope: punctuation.section.block.end.swift
+          pop: 1
+        - match: \bcase\b
+          scope: keyword.declaration.case.swift
+          push:
+            - match: (?!\bcase\b){{identifier}}
+              scope: variable.other.constant.swift
+            - match: (?=}|^$|\bcase\b|[^,\s(])
+              pop: 1
+            - include: parameter-list
+            - include: punctuations
+            - include: reserved-word-pop
+        - include: statements-scope-type-declaration
+        - include: statements-scope-block
+        - include: statements-scope-any
+        - match: '{{identifier}}'
+        - include: else-pop
+    - include: else-pop
+
+  declaration-enum-name:
+    - match: ({{non_reserved_identifier}})
+      scope: entity.name.enum.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-struct:
+    - match: \bstruct\b
+      scope: keyword.declaration.struct.swift
+      push:
+        - - meta_scope: meta.struct.swift
+          - include: immediately-pop
+        - code-block
+        - declaration-trailing-signature
+        - generic-parameter-clause-declaration-pop
+        - declaration-struct-name
+
+  declaration-struct-name:
+    - match: ({{non_reserved_identifier}})
+      scope: entity.name.struct.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-class:
+    - match: \b(class)\b(?=\s+\b(var|func|{{access_levels}})\b)
+      captures:
+        1: keyword.declaration.class.swift
+
+    - match: \b(class)\b # (?=\s+{{non_reserved_identifier}})
+      captures:
+        1: keyword.declaration.class.swift
+      push:
+        - - meta_scope: meta.class.swift
+          - include: immediately-pop
+        - code-block
+        - declaration-trailing-signature
+        - generic-parameter-clause-declaration-pop
+        - declaration-class-name
+
+    # - match: \bclass\b
+    #   scope: keyword.declaration.class.swift
+
+  declaration-class-name:
+    - match: ({{non_reserved_identifier}})
+      scope: entity.name.class.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-actor:
+    - match: \bactor\b
+      scope: keyword.declaration.actor.swift
+      push:
+        - - meta_scope: meta.actor.swift
+          - include: immediately-pop
+        - code-block
+        - declaration-trailing-signature
+        - generic-parameter-clause-declaration-pop
+        - declaration-actor-name
+
+  declaration-actor-name:
+    - match: ({{non_reserved_identifier}})
+      scope: keyword.symbol-list.swift entity.name.actor.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-init-deinit:
+    - match: (?:(\.)\b(init)\b)
+      captures:
+        1: punctuation.accessor.dot.swift
+        2: variable.function.init.swift
+
+    # Prevent '_ = .init()' to be listed in Goto Symbol
+    - match: (?:\b(init)\b(?:(\?)|(\!))?)
+      captures:
+        1: keyword.declaration.init.swift
+        2: keyword.operator.optional.swift
+        3: keyword.operator.implicitly-unwrapped-optional.swift
+      push:
+        - - meta_scope: meta.init.swift
+          - include: immediately-pop
+        - inner-code-block-pop
+        - - match: (?={)
+            pop: 1
+          - match: (:)
+            scope: punctuation.separator.annotation.conformance.swift
+          - match: (?=\bwhere\b)
+            push: generic-where-clause-pop
+          - include: generic-parameter-clause-call
+          - include: punctuations
+          - include: keyword-declarations
+          - include: modifier-types
+          - include: operator-builtins
+          - include: identifier-support
+          - include: reserved-word-pop
+          - include: else-pop
+        - - meta_scope: meta.entity.name.init.swift
+          - include: immediately-pop
+        - parameter-list-pop
+        - generic-parameter-clause-declaration-pop
+
+    - match: (?:^|\s)\b(deinit)\b
+      captures:
+        1: keyword.declaration.deinit.swift
+      push:
+        - - meta_scope: meta.deinit.swift
+          - include: immediately-pop
+        - inner-code-block-pop
+
+    - match: \b(?:(init)|(deinit))\b
+      captures:
+        1: keyword.declaration.init.swift
+        2: keyword.declaration.deinit.swift
+
+  declaration-protocol:
+    - match: \bprotocol\b
+      scope: keyword.declaration.protocol.swift
+      push:
+        - - meta_scope: meta.protocol.swift
+          - include: immediately-pop
+        - code-block
+        - declaration-trailing-signature
+        - generic-parameter-clause-declaration-pop # SE-0346
+        - declaration-protocol-name
+
+  declaration-protocol-name:
+    - match: ({{non_reserved_identifier}})
+      scope: keyword.symbol-list.swift entity.name.protocol.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-extension:
+    - match: \bextension\b
+      scope: keyword.declaration.extension.swift
+      push:
+        - - meta_scope: meta.extension.swift
+          - include: immediately-pop
+        - code-block
+        - declaration-trailing-signature
+        - declaration-extension-name
+
+  declaration-extension-name:
+    - match: (?={{non_reserved_identifier}})
+      set:
+        # Workaround to show "x" in Symbol List: entity.name.x ...
+        - meta_content_scope: keyword.symbol-list.swift entity.name.x.extension.swift
+        - match: (?=\s*(?:[:{]|$|\bwhere\b|\/\*))
+          pop: 1
+        - include: punctuations
+        - include: identifier-support
+        - match: '{{identifier}}'
+        - include: else-pop
+    - include: reserved-word-pop
+
+  declaration-operator:
+    - match: \b(?:(prefix)|(postfix)|(infix))\b
+      captures:
+        1: storage.modifier.operator.prefix.swift
+        2: storage.modifier.operator.postfix.swift
+        3: storage.modifier.operator.infix.swift
+      push:
+        - - meta_scope: meta.operator.swift
+          - include: immediately-pop
+        - - match: ({{operator}}|{{dot_operator}})
+            captures:
+              1: entity.name.operator.swift
+              3: invalid.illegal.dot-not-allowed.swift
+            pop: 1
+          - include: else-pop
+        - - match: \boperator\b
+            scope: keyword.declaration.operator.swift
+            pop: 1
+          - include: else-pop
+    - match: \boperator\b
+      scope: keyword.declaration.operator.swift
+
+  declaration-subscript:
+    - match: \bsubscript\b
+      scope: keyword.declaration.subscript.swift
+      push:
+        - - meta_scope: meta.subscript.swift
+          - include: immediately-pop
+        - inner-code-block-pop
+        - declaration-trailing-signature
+        - - meta_scope: meta.entity.name.subscript.swift
+          - include: immediately-pop
+        - parameter-list-pop
+        - generic-parameter-clause-declaration-pop
+
+  declaration-precedencegroup:
+    - match: \bprecedencegroup\b
+      scope: keyword.declaration.precedencegroup.swift
+      push:
+        - declaration-precedencegroup-body
+        - declaration-precedencegroup-name
+
+  declaration-precedencegroup-name:
+    - match: ({{non_reserved_identifier}})
+      scope: entity.name.precedencegroup.swift
+      pop: 1
+    - include: reserved-word-pop
+    - include: else-pop
+
+  declaration-precedencegroup-body:
+    - meta_scope: meta.precedencegroup.swift
+    - match: \{
+      scope: punctuation.section.block.begin.swift
+      push:
+        - meta_content_scope: meta.block.swift
+        - match: \}
+          scope: punctuation.section.block.end.swift
+          pop: 2
+
+        - match: \b(?:(higherThan|lowerThan)|(assignment)|(associativity))\b
+          captures:
+            1: keyword.declaration.precedencegroup.relation.swift
+            2: keyword.declaration.precedencegroup.assignment.swift
+            3: keyword.declaration.precedencegroup.associativity.swift
+        - match: \b(left|right|none)\b
+          scope: constant.language.precedencegroup.associativity.swift
+
+        - include: boolean-literal
+        - include: identifier-support
+        - include: punctuations
+        - include: else-pop
+    - include: else-pop
+
+  ### [ Attributes ] ####################################################################
+
+  # [ TODO: Support attributes comprehensively ] #
+  # Including private attributes and annotations, such as underscored ones.
+  # swift/include/swift/AST/Attr.def seems to be a good source to observe.
+  # However, it's not clear which one is which - which one is "@" prefixed attribute?
+  # It also contains now retired attributes.
+
+  attribute-builtins:
+    - match: |-
+        (?x:
+          (@)\b(
+              GKInspectable
+            | IBAction | IBDesignable | IBInspectable | IBOutlet | IBSegueAction
+            | MainActor | Sendable
+            | NSApplicationMain | NSCopying | NSManaged | UIApplicationMain
+            | autoclosure | escaping | convention
+            | discardableResult
+            | dynamicCallable
+            | dynamicMemberLookup
+            | main
+            | frozen
+            | inlinable | usableFromInline
+            | nonobjc | objc | objcMembers
+            | propertyWrapper | resultBuilder
+            | requires_stored_property_inits
+            | testable
+            | unknown
+            | warn_unqualified_access
+          )\b
+        )
+      captures:
+        1: meta.annotation.swift punctuation.definition.annotation.swift
+        2: meta.annotation.identifier.swift support.function.annotation.swift
+
+  attribute-custom:
+    - match: (@)\s*({{identifier}})\s*(\()
+      captures:
+        1: meta.annotation.swift punctuation.definition.annotation.swift
+        2: meta.annotation.identifier.swift variable.function.annotation.swift
+        3: punctuation.section.parens.begin.swift
+      push:
+        - meta_content_scope: meta.annotation.parameters.swift
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - include: parameter-list-body
+        - include: else-pop
+    - match: (@)\s*({{identifier}})
+      captures:
+        1: meta.annotation.swift punctuation.definition.annotation.swift
+        2: meta.annotation.identifier.swift variable.function.annotation.swift
+
+  ### [ Generic Parameters and Arguments ] ##############################################
+
+  # Generic parameter clause for call-site (include only)
+  generic-parameter-clause-call:
+    - match: |-
+        (?x:
+          (<)
+          (?:
+            (?=[{{identifier_character}}\.]+>)
+          | (?=
+              [{{generic_clause_chars_call_site}}]+>
+              \s*
+              (?:[?.,(){=]|where|\s+(?://|/\*)|$)
+            )
+          )
+        )
+      captures:
+        1: punctuation.definition.generic.begin.swift
+      push: generic-parameter-clause-call-body
+
+  generic-parameter-clause-call-body:
+    - meta_scope: meta.generic.swift
+    - match: '>'
+      scope: punctuation.definition.generic.end.swift
+      pop: 1
+    - match: (<)(?=[{{generic_clause_chars_call_site}}]+>)
+      captures:
+        1: punctuation.definition.generic.begin.swift
+      push: generic-parameter-clause-call-body
+    - match: ':'
+      scope: punctuation.separator.annotation.conformance-or-inheritance.swift
+    - match: (?:(\?)|(\!))
+      captures:
+        1: keyword.operator.optional.swift
+        2: keyword.operator.implicitly-unwrapped-optional.swift
+    - include: parameter-list
+    - include: types
+    - include: identifier-support
+    - include: punctuations
+    - include: else-pop
+
+  # Generic parameter clause for declarations
+  generic-parameter-clause-declaration:
+    - match: |-
+        (?x:
+          (<)
+          (?:
+            (?=$)
+          | (?=[{{identifier_character}}\.]+>)
+          | (?=[{{identifier_character}}]+(?![.])(?:[{{generic_clause_chars}}]+)?)
+          )
+        )
+      captures:
+        1: punctuation.definition.generic.begin.swift
+      push: generic-parameter-clause-declaration-body
+
+  generic-parameter-clause-declaration-pop:
+    - include: generic-parameter-clause-declaration
+    - include: else-pop
+
+  generic-parameter-clause-declaration-body:
+    - meta_scope: meta.generic.swift
+    - match: ({{identifier}})\s*(?=,)
+      captures:
+        1: support.generic.swift
+    - match: ({{identifier}})\s*(:)
+      captures:
+        1: support.generic.swift
+        2: punctuation.separator.annotation.conformance-or-inheritance.swift
+      set:
+        - meta_scope: meta.generic.swift
+        - match: ({{identifier}})\s*(:)
+          captures:
+            1: support.generic.swift
+            2: punctuation.separator.annotation.conformance-or-inheritance.swift
+        - match: '&'
+          scope: keyword.operator.protocol-composition-type.swift
+        - include: generic-parameter-clause-declaration-body-common
+        - include: types
+        - include: identifier-support
+    - include: generic-parameter-clause-declaration-body-common
+
+  generic-parameter-clause-declaration-body-common:
+    - match: '>'
+      scope: punctuation.definition.generic.end.swift
+      pop: 1
+    - match: '[^{{generic_clause_chars}}]'
+      scope: invalid.illegal.generic-missing-closing-angle.swift
+      pop: 1
+    - match: \.
+      scope: punctuation.accessor.dot.swift
+    - match: (,)\s*?({{identifier}})(?!\s*:)
+      captures:
+        1: punctuation.separator.continuation.swift
+        2: support.generic.swift
+    - match: \,
+      scope: punctuation.separator.continuation.swift
+    - match: (<)(?=[{{generic_clause_chars}}])
+      captures:
+        1: punctuation.definition.generic.begin.swift
+      push: generic-parameter-clause-declaration-body
+
+  generic-where-clause:
+    - match: \bwhere\b
+      scope: keyword.control.conditional.where.swift
+      push:
+        - meta_scope: meta.generic.where-clause.swift
+        - match: (?=\s*(?:\{|{{reserved_word}}))
+          pop: 1
+        # Note: This disables identifier-support coloring:
+        # - match: (?={{identifier}}(\.)(?={{identifier}})?)\s*(?=[:=])
+        #   captures:
+        #     1: support.generic.swift
+        #     2: punctuation.separator.continuation.swift
+        - match: ':'
+          scope: punctuation.separator.annotation.conformance-or-inheritance.swift
+        - match: ==
+          scope: keyword.operator.comparison.swift
+        - include: punctuations
+        - include: types
+        - include: identifier-support
+        - include: else-pop
+
+  generic-where-clause-pop:
+    - include: generic-where-clause
+    - include: reserved-word-pop
+    - include: else-pop
+
+  ### [ Compiler ] ######################################################################
+
+  compiler-availability:
+    - match: \#(available|unavailable)\b
+      scope: keyword.other.preprocessor.swift
+      push:
+        - - meta_scope: meta.preprocessor.swift
+          - include: immediately-pop
+        - compiler-availability-body
+
+    - match: (@)\s*(available)
+      captures:
+        1: meta.annotation.swift punctuation.definition.annotation.swift
+        2: meta.annotation.identifier.swift support.function.swift
+      push:
+        - - meta_content_scope: meta.annotation.parameters.swift
+          - include: immediately-pop
+        - compiler-availability-body
+
+  compiler-availability-body:
+    - match: \)
+      pop: 1
+      scope: punctuation.section.parens.end.swift
+
+    # platform-name
+    - match: |-
+        (?x:
+          \b(
+            # swift/include/swift/AST/PlatformKinds.def
+              iOS
+            | tvOS
+            | watchOS
+            | macOS
+            | iOSApplicationExtension
+            | tvOSApplicationExtension
+            | watchOSApplicationExtension
+            | macOSApplicationExtension
+            | macCatalyst
+            | macCatalystApplicationExtension
+            | OpenBSD
+            | Windows
+            # swift/include/swift/Basic/Features.def
+            | noasync
+            # manually added
+            | swift
+          )\b
+        )
+      captures:
+        1: constant.language.preprocessor.platform-name.swift
+
+    # platform-version
+    - match: ([0-9]+)(\.)?([0-9]+)?(\.)?([0-9]+)?
+      captures:
+        1: constant.numeric.value.swift
+        2: punctuation.separator.decimal.swift
+        3: constant.numeric.value.swift
+        4: punctuation.separator.decimal.swift
+        5: constant.numeric.value.swift
+
+    # wildcard
+    - match: \*
+      scope: constant.language.preprocessor.wildcard.swift
+
+    # milestones (only for "@available(...)")
+    - match: \b(?:(unavailable)|introduced|deprecated|obsoleted|message|renamed)\b
+      scope: variable.parameter.swift
+      captures:
+        1: constant.language.preprocessor.unavailable.swift
+
+    - match: \(
+      scope: punctuation.section.parens.begin.swift
+
+    - match: ':'
+      scope: punctuation.separator.annotation.swift
+
+    - include: string-literal # extended-string-literal is not allowed
+    - include: punctuations
+
+  compiler-directive-clause:
+    - match: (#)(if)\b
+      captures:
+        1: punctuation.definition.preprocessor.swift
+        2: keyword.control.preprocessor.conditional.if.swift
+      push:
+        - - meta_scope: meta.preprocessor.swift
+          - include: immediately-pop
+        - statements
+        - compiler-directive-clause-content
+
+    - match: (#)(?:(else)|(elseif))\b
+      captures:
+        1: punctuation.definition.preprocessor.swift
+        2: keyword.control.preprocessor.conditional.else.swift
+        3: keyword.control.preprocessor.conditional.elseif.swift
+      push: compiler-directive-clause-content
+
+    - match: (#)(endif)\b
+      captures:
+        1: punctuation.definition.preprocessor.swift
+        2: keyword.control.preprocessor.conditional.end.swift
+      pop: 1
+
+  compiler-directive-clause-content:
+    - match: $
+      pop: 1
+    - include: compiler-compilation-condition
+    - match: \(
+      scope: punctuation.section.parens.begin.swift
+      push:
+        - meta_scope: meta.parens.swift
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - include: compiler-compilation-condition
+        - include: compiler-directive-clause-content
+    - match: (?:\s*\b\w+?\b\s*)(?!\() # compiler flag
+      scope: text.preprocessor.swift
+    - match: (?:!|&&|\|\|)
+      scope: keyword.operator.logical.swift
+
+  compiler-compilation-condition:
+    - match: \b(os|arch|swift|compiler|targetEnvironment)\b
+      scope: support.function.preprocessor.platform-condition.swift
+      push:
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - match: \(
+          scope: punctuation.section.parens.begin.swift
+        - include: compiler-compilation-condition-value
+        - match: '{{identifier}}'
+          scope: constant.other.placeholder.swift # Fallback for unknown names
+        - match: '{{whitespaces}}'
+        - include: else-pop
+
+    - match: \bcanImport\b
+      scope: support.function.preprocessor.platform-condition.swift
+      push:
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - match: \(
+          scope: punctuation.section.parens.begin.swift
+        - match: '{{identifier}}'
+          scope: support.module.swift
+        - match: '{{whitespaces}}'
+        - include: else-pop
+
+  # swift/lib/Basic/LangOptions.cpp
+  compiler-compilation-condition-value:
+    # operating-system
+    - match: |-
+        (?x:\b(?:
+          OSX
+        | macOS
+        | tvOS
+        | watchOS
+        | iOS
+        | Linux
+        | FreeBSD
+        | OpenBSD
+        | Windows
+        | Android
+        | PS4
+        | Cygwin
+        | Haiku
+        | WASI
+        )\b)
+      scope: constant.language.preprocessor.operating-system.swift
+    # architecture
+    - match: |-
+        (?x:\b(?:
+          arm
+        | arm64
+        | arm64_32
+        | i386
+        | x86_64
+        | powerpc
+        | powerpc64
+        | powerpc64le
+        | s390x
+        | wasm32
+        )\b)
+      scope: constant.language.preprocessor.architecture.swift
+    # swift-version
+    - match: (>=|<)([0-9])([.])?([0-9])?([.])?([0-9])?
+      captures:
+        1: keyword.operator.comparison.swift
+        2: constant.numeric.value.swift
+        3: punctuation.separator.decimal.swift
+        4: constant.numeric.value.swift
+        5: punctuation.separator.decimal.swift
+        6: constant.numeric.value.swift
+    # environment
+    - match: \b(simulator|macCatalyst)\b
+      scope: constant.language.preprocessor.environment.swift
+
+  compiler-literals:
+    - match: |-
+        (?x:
+          (\#)
+          (?:
+            # literal-expression
+            file | fileID | filePath
+          | line | column | function | dsohandle
+          )\b
+        )
+      scope: meta.preprocessor.swift keyword.other.preprocessor.swift
+    - match: |-
+        (?x:
+          (\#)
+          (?:
+          # playground-literal
+            colorLiteral | fileLiteral | imageLiteral
+          # selector-expression
+          | selector
+          # key-path-string-expression
+          | keyPath
+          # line-control-statement
+          | sourceLocation
+          # diagnostic-statement
+          | error | warning
+          )\b
+        )
+      scope: keyword.other.preprocessor.swift
+      push:
+        - - meta_scope: meta.preprocessor.swift
+          - include: immediately-pop
+        - - match: (?=\()
+            set: parameter-list-pop
+          - include: else-pop
+
+  ### [ Supports ] ######################################################################
+
+  function-call:
+    # function-call-expression
+    - match: |-
+        (?x:
+          ({{identifier}})
+          \s*?
+          (?!.*?=.*?[(\[]) # Assignment op. cannot precede the paren
+          (?=[(\[])
+          (?!.+?\)[^.,|/]+?{{identifier}}) # Another expression cannot continue
+        )
+      captures:
+        1: variable.function.swift
+      push: parameter-list-pop
+    # function-call-expression + trailing-closures
+    # - match: |-
+    #     (?x:
+    #       # Weak speculation that it's a if-clause if "is" prefixed.
+    #       (?!is)({{identifier}})
+    #       \s*
+    #       (?!.*?=.*?[(\[]) # Assignment op. cannot precede the paren
+    #       (?={)
+    #     )
+    #   captures:
+    #     1: variable.function.swift
+
+  identifier-support:
+    # Swift Standard Library Types
+    - include: Swift - Standard Library.sublime-syntax
+    # 'NSO'bject (rough capture, as one should not bother using NS prefix)
+    - match: \b(NS[A-Z][{{identifier_character}}]+)\b(?!`)
+      scope: support.class.cocoa.swift
+    # Prefixed type name (e.g. 'UIA'pplication)
+    - match: \b([A-Z]{3}[{{identifier_character}}]+)\b(?!`)
+      scope: support.class.swift
+    # Konstant ('kAXT'rustedCheckOptionPrompt or some have prefix with 4 letters)
+    - match: \b(k[A-Z]{3,4}[{{identifier_character}}]+)\b(?!`)
+      scope: support.constant.cocoa.swift
+    # Konstant ('kVK_'ANSI_A)
+    - match: \b(k[A-Z]{2,3}_[{{identifier_character}}]+)\b(?!`)
+      scope: support.constant.cocoa.swift
+    # C / C++ Symbols ('AXI'sProcessTrusted())
+    - match: \b([A-Z]{3,4}[{{identifier_character}}]+)\b(?!`)
+      scope: support.function.cocoa.swift
+    # Generic Type (e.g. <T>)
+    - match: \b[A-Z]\b(?!`)
+      scope: support.generic.swift
+    # Generic scope for a 'T'ype name or '_'Private type
+    - match: \b((?:[A-Z]|_+[A-Z])[{{identifier_character}}]+)\b(?!`)
+      scope: support.other.swift

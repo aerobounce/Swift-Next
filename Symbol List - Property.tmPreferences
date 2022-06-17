@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>scope</key>
+    <string><![CDATA[
+source.swift meta.let meta.entity.name.let - (meta.function, meta.init, meta.subscript),
+source.swift meta.var meta.entity.name.var - (meta.function, meta.deinit, meta.subscript)
+    ]]></string>
+    <key>settings</key>
+    <dict>
+        <key>showInSymbolList</key>
+        <integer>1</integer>
+        <key>symbolTransformation</key>
+        <string><![CDATA[
+            s/\blet\b|\bvar\b//g;
+            s/\s+//g;
+        ]]></string>
+    </dict>
+</dict>
+</plist>

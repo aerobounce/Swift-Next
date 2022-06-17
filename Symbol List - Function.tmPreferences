@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>scope</key>
+    <string><![CDATA[
+        source.swift meta.entity.name.function,
+        source.swift meta.entity.name.init,
+        source.swift meta.entity.name.subscript
+    ]]></string>
+    <key>settings</key>
+    <dict>
+        <key>showInSymbolList</key>
+        <integer>1</integer>
+        <key>showInIndexedSymbolList</key>
+        <integer>1</integer>
+        <key>showInIndexedReferenceList</key>
+        <integer>1</integer>
+
+        <!-- Tested with .swiftinterface files shipped with Swift version 5.6 -->
+        <key>symbolTransformation</key>
+        <string><![CDATA[
+
+        # Remove comments
+        s/\/\/.*//g
+
+        # Regularize spaces in advance
+        s/\n//g
+        s/^ +//g
+        s/ +/ /g
+
+        # Remove [], <Generics>, @attributes and return-arrow ->
+        s/\[.*?\]//g
+        s/<[<:&\.,\w\s`>\?\!\(\)]+?>//g
+        s/@\w+?\b\s?//g
+        s/->//g
+
+        # Remove attributes (e.g. inout)
+        s/:\s*\b\w+?\b/:/g
+        s/:\s*\b\w+?\b/:/g
+        s/:\s*\b\w+?\b/:/g
+        s/:\s*\b\w+?\b/:/g
+
+        # Remove inner parens (This might seem dumb but reliable)
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+        s/^(.+)\s*\(.*?\)\s*(.+)$/\1\2/g
+
+        # Remove parameter type
+        s/:.+?,/:/g
+        s/(.+):.*?\)/\1:\)/g
+
+        # Remove local parameter-name: /label (label)/
+        s/(\w+)\s+?\w+:/\1:/g;
+
+        # Remove remaining comma
+        s/,//g
+
+        # Remove spaces
+        s/ //g
+
+        # Add space after operator
+        s/^([^\w]+)\(/\1 \(/g
+
+        ]]></string>
+
+    </dict>
+</dict>
+</plist>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+    <dict>
+        <key>scope</key>
+        <string>source.swift</string>
+        <key>settings</key>
+        <dict>
+            <key>indentSquareBrackets</key>
+            <false/>
+            <key>indentParens</key>
+            <false/>
+
+            <!-- TODO: Determine whether those are necessary or useful -->
+
+            <!-- <key>preserveIndent</key>
+            <false/> -->
+
+            <!-- <key>increaseIndentPattern</key>
+            <string><![CDATA[]]></string> -->
+
+            <!-- <key>decreaseIndentPattern</key>
+            <string><![CDATA[]]></string> -->
+
+            <!-- <key>bracketIndentNextLinePattern</key>
+            <string><![CDATA[]]></string> -->
+
+            <!-- <key>disableIndentNextLinePattern</key>
+            <string><![CDATA[]]></string> -->
+
+            <!-- <key>unIndentedLinePattern</key>
+            <string><![CDATA[]]></string> -->
+
+        </dict>
+    </dict>
+</plist>

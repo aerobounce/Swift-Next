@@ -1,0 +1,101 @@
+%YAML 1.2
+---
+name: Swift Markup
+scope: source.swift
+version: 2
+hidden: true
+
+# This is very basic support for markups.
+contexts:
+  main:
+    - include: parameters
+    - include: workarounds
+    - include: markdown
+
+  # Matches are taken from and modified Markdown.sublime-syntax.
+  markdown:
+    - match: (^|[ ]+)([*+-])( (\[[ xX]\]))?(?=\s)
+      captures:
+        1: markup.list.unnumbered.markdown
+        2:
+          markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+        3: markup.list.unnumbered.markdown
+        4: constant.language.checkbox.markdown-gfm
+
+    - match: (^|[ ]+)(\d+([.]))(?=\s)(?!$)
+      captures:
+        1: markup.list.numbered.markdown
+        2: markup.list.numbered.bullet.markdown
+        3: punctuation.definition.list_item.markdown
+
+    # code-span:
+    - match: (`+)(?!`)
+      scope: punctuation.definition.raw.begin.markdown
+      push:
+        - meta_scope: markup.raw.inline.markdown
+        - match: \1(?!`)
+          scope: punctuation.definition.raw.end.markdown
+          pop: 1
+        - match: $
+          pop: 1
+        - match: '`+'
+        - match: ^\s*$\n?
+          scope: invalid.illegal.non-terminated.raw.markdown
+          pop: 1
+
+    - include: Packages/Markdown/Markdown.sublime-syntax#atx-heading
+    - include: Packages/Markdown/Markdown.sublime-syntax#strikethrough
+
+  # https://github.com/apple/swift/blob/main/docs/DocumentationComments.md
+  parameters:
+    - match: |-
+        (?xi:
+          (\s*-\s+)
+          \b(
+            Parameters
+          | Returns
+          | Throws
+          | Attention
+          | Author
+          | Authors
+          | Bug
+          | Complexity
+          | Copyright
+          | Date
+          | Experiment
+          | Important
+          | Invariant
+          | Note
+          | Postcondition
+          | Precondition
+          | Remark
+          | Remarks
+          | Requires
+          | See
+          | Since
+          | Todo
+          | Version
+          | Warning
+          )\b
+          (?=\:)
+        )
+      captures:
+        1:
+          markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+        2: markup.bold.markdown punctuation.definition.annotation.swift
+
+    - match: |-
+        (?xi:
+          (\s*-\s+)
+          (?:\b(Parameter)\b\s+)?
+          \b([\w\d]+)\b
+          (?=\:)
+        )
+      captures:
+        1:
+          markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+        2: markup.bold.markdown punctuation.definition.annotation.swift
+        3: variable.parameter.swift
+
+  workarounds:
+    - match: \\

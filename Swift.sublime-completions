@@ -1,0 +1,203 @@
+{
+    "scope": "source.swift",
+    "completions": [
+        {
+            "contents": "protocol ${1:name} {\n    ${2:requirements}\n}",
+            "trigger": "protocol",
+            "details": "Protocol",
+            "kind": "snippet"
+        },
+        {
+            "contents": "struct ${1:name} {\n    ${2:fields}\n}",
+            "trigger": "struct",
+            "details": "Struct",
+            "kind": "snippet"
+        },
+        {
+            "contents": "struct ${1:name}: OptionSet {\n    let rawValue: ${2:integer type}\n\n    static let ${3:optionA} = ${4:name}(rawValue: 1 << 0)\n    static let ${5:optionB} = ${6:name}(rawValue: 1 << 1)\n    static let ${7:optionC} = ${8:name}(rawValue: 1 << 2)\n\n    static let all: ${9:name} = [.${10:optionA}, .${11:optionB}, .${12:optionC}]\n}",
+            "trigger": "optionset",
+            "details": "OptionSet",
+            "kind": "snippet"
+        },
+        {
+            "contents": "class ${1:name}: ${2:super class} {\n    ${3:code}\n}",
+            "trigger": "class",
+            "details": "Subclass",
+            "kind": "snippet"
+        },
+        {
+            "contents": "enum ${1:name} {\n    case ${2:case}\n}",
+            "trigger": "enum",
+            "details": "Enumerated Type Declaration",
+            "kind": "snippet"
+        },
+        {
+            "contents": "func ${1:name}(${2:parameters}) -> ${3:return type} {\n    ${4:function body}\n}",
+            "trigger": "func",
+            "details": "Function Statement",
+            "kind": "snippet"
+        },
+        {
+            "contents": "if ${1:condition} {\n    ${2:code}\n}",
+            "trigger": "if",
+            "details": "If Statement",
+            "kind": "snippet"
+        },
+        {
+            "contents": "switch ${1:value} {\n    case ${2:pattern}:\n        ${3:code}\n    default:\n        ${4:code}\n}",
+            "trigger": "switch",
+            "details": "Switch Statement",
+            "kind": "snippet"
+        },
+        {
+            "contents": "for ${1:item} in ${2:items} {\n    ${3:code}\n}",
+            "trigger": "for",
+            "details": "For Statement",
+            "kind": "snippet"
+        },
+        {
+            "contents": "while ${1:condition} {\n    ${2:code}\n}",
+            "trigger": "while",
+            "details": "While Statement",
+            "kind": "snippet"
+        },
+        {
+            "contents": "let ${1:name} = ${2:value}\n        ",
+            "trigger": "let",
+            "details": "Let Declaration",
+            "kind": "snippet"
+        },
+        {
+            "contents": "var ${1:name} = ${2:value}\n        ",
+            "trigger": "var",
+            "details": "Var Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "guard",
+            "contents": "guard ${1:condition} else {\n    ${2:statements}\n}",
+            "details": "Guard Statement",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "guardlet",
+            "contents": "guard let ${1:constant} = ${2:expression} else { return ${3:return value} }",
+            "details": "Guard-Let Statement",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "docatch",
+            "contents": "do {\n    try ${1:throwing expression}\n} catch ${2:pattern} {\n    ${3:statements}\n}",
+            "details": "Do-Catch Statement",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "varget",
+            "contents": "var ${1:variable name}: ${2:type} {\n    ${3:statements}\n}",
+            "details": "Computed Variable Get Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "vargetset",
+            "contents": "var ${1:variable name}: ${2:type} {\n    get {\n        ${3:statements}\n    }\n    set {\n        ${4:variable name} = newValue\n    }\n}",
+            "details": "Computed Variable Get and Set Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "defer",
+            "contents": "defer {\n    ${1:deferred statements}\n}",
+            "details": "Defer Statement",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "ifelse",
+            "contents": "if ${1:condition} {\n    ${2:statements}\n} else {\n    ${3:statements}\n}",
+            "details": "If-Else Statement",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "iflet",
+            "contents": "if let ${1:constant name} = ${2:optional} {\n    ${3:statements}\n}",
+            "details": "If-Let Statement",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "unwind",
+            "contents": "@IBAction func unwindTo${1:name}(_ unwindSegue: UIStoryboardSegue) {\n    let sourceViewController = unwindSegue.source\n    // Use data from the view controller which initiated the unwind segue\n}",
+            "details": "Unwind Segue Method",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "test",
+            "contents": "func test${1:Name}() {\n    ${2:statements}\n}",
+            "details": "Test Method",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "lazyvar",
+            "contents": "lazy var ${1:property name} = ${2:expression}",
+            "details": "Lazy Stored Property Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "lazyvarclosure",
+            "contents": "lazy var ${1:property name}: ${2:type name} = {\n    ${3:statements}\n    return ${4:value}\n}()",
+            "details": "Lazy Closure Stored Property Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "letclosure",
+            "contents": "let ${1:constant name}: ${2:type name} = {\n    ${3:statements}\n    return ${4:value}\n}()",
+            "details": "Closure Stored Constant Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "available",
+            "contents": "if #available(${1:{i, mac, tv, watch}}OS ${2:x.y.z}, *) {\n    ${3:API available statements}\n} else {\n    ${4:fallback statements}\n}",
+            "details": "API Availability Check",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "typealias",
+            "contents": "typealias ${1:type name} = ${2:type expression}",
+            "details": "Typealias Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "closure",
+            "contents": "{ (${1:parameters}) -> ${2:return type} in\n    ${3:statements}\n}",
+            "details": "Closure Expression",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "init",
+            "contents": "init(${1:parameters}) {\n    ${2:statements}\n}",
+            "details": "Initializer Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "convenienceinit",
+            "contents": "convenience init(${1:parameters}) {\n    ${2:statements}\n}",
+            "details": "Convenience Initializer Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "requiredinit",
+            "contents": "required init(${1:parameters}) {\n    ${2:statements}\n}",
+            "details": "Required Initializer Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "deinit",
+            "contents": "deinit {\n    ${1:statements}\n}",
+            "details": "Deinitializer Declaration",
+            "kind": "snippet"
+        },
+        {
+            "trigger": "import",
+            "contents": "import ${1:module}",
+            "details": "Import Statement",
+            "kind": "snippet"
+        }
+    ]
+}
