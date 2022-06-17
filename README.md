@@ -69,6 +69,11 @@ $ rg '@\w+' -g '*.swiftinterface' | subl
 - [wbond/swift-for-sublime](https://github.com/wbond/swift-for-sublime) (`floating-point-literal` and `string-literal` are modified version of this package)
 - [GregoryBL/SwiftSyntax](https://github.com/GregoryBL/SwiftSyntax)
 
+## Other Fundamental Packages
+
+- [LSP-SourceKit](https://github.com/sublimelsp/LSP-SourceKit)
+- [Swift-Format](https://github.com/aerobounce/Sublime-Swift-Format)
+
 ## License
 
 - MIT
