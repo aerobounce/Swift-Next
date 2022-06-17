@@ -52,7 +52,7 @@ $ rg '@\w+' -g '*.swiftinterface' | subl
 
 ### Official Documents and Tips
 
-- Default Packages of ST4
+- [Default Packages](https://github.com/sublimehq/Packages)
 - [Syntax Definitions](https://www.sublimetext.com/docs/syntax.html)
 - [Scope Naming](https://www.sublimetext.com/docs/scope_naming.html)
 - [Syntax Development Tips/Advice](https://github.com/sublimehq/Packages/issues/757)
