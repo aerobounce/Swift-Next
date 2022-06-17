@@ -44,7 +44,7 @@
 
 - Find attributes in swiftinterface files
 ```sh
-$ cd /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/swift`
+$ cd /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/swift
 $ rg '@\w+' -g '*.swiftinterface' | subl
 ```
 
