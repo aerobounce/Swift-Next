@@ -1,0 +1,20 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "index_files": false,
+        "index_workers": 1,
+        "index_exclude_patterns": [
+            "*.swift"
+        ],
+        "lsp_format_on_save": false,
+        "LSP": {
+            "SourceKit": {
+                "enabled": false
+            }
+        }
+    }
+}
