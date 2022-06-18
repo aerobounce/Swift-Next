@@ -3,7 +3,7 @@
 #
 # This file is initially made based on and tested with Swift 5.6.
 #
-name: Swift Next
+name: Swift
 scope: source.swift
 version: 2
 first_line_match: |-
