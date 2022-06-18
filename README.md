@@ -2,6 +2,11 @@
 <h1 align="center">Swift Next</h1>
 <h3 align="center">Modern Swift syntax definition for Sublime Text 4 in async/await era.</h3>
 
+<p align="center">
+    <img src="https://img.shields.io/badge/Swift%20-5.6+-orange.svg"></img>
+    <img src="https://img.shields.io/badge/Sublime%20Text-4+-green.svg"></img>
+</p>
+
 ## The Goal
 
 - Port the Grammar of Swift Language to `.sublime-syntax`
@@ -19,9 +24,10 @@
 
 ## Status
 
-- Initially created based on Swift 5.6 (some accepted / implemented proposals are supported in advance).
-- Fully supported up to Swift 5.6 except corner cases which are assumed to be exist.
-- Is under the manual visual test against all the swift files in [swift](https://github.com/apple/swift) repository.
+- Based on Swift 5.6 (some accepted / implemented proposals are supported in advance).
+    - Full support of the version, except corner cases which are assumed to be exist.
+- Older Swift versions are not supported (aka deprecated or retired syntax).
+- Is under the manual visual test against all the swift files in [apple/swift](https://github.com/apple/swift) repository.
 
 **TODO**
 
@@ -58,24 +64,30 @@ $ rg '@\w+' -g '*.swiftinterface' | subl
 
 ## References
 
-**Official Documents and Tips**
+> If you are to create a syntax definition file for the first time without deep regex background like me, those are everything you need.
 
-- [Default Packages](https://github.com/sublimehq/Packages)
-- [Syntax Definitions](https://www.sublimetext.com/docs/syntax.html)
-- [Scope Naming](https://www.sublimetext.com/docs/scope_naming.html)
-- [Syntax Development Tips/Advice](https://github.com/sublimehq/Packages/issues/757)
+**Sublime Text**
 
-**Apple**
+- [Sublime Text — Syntax Definitions](https://www.sublimetext.com/docs/syntax.html)
+- [Sublime Text — Scope Naming](https://www.sublimetext.com/docs/scope_naming.html)
+- [Sublime Text Community Documentation](https://docs.sublimetext.io/)
+- [sublimehq/Packages](https://github.com/sublimehq/Packages)
+- [sublimehq/Packages — Syntax Development Tips/Advice #757](https://github.com/sublimehq/Packages/issues/757)
+
+**Regular Expression**
+
+- [regex101](https://regex101.com/)
+- [Oniguruma syntax (operator) configuration](https://github.com/kkos/oniguruma/blob/master/doc/SYNTAX.md)
+
+**Swift**
 
 - [apple/swift](https://github.com/apple/swift)
 - [The Swift Programming Language](https://docs.swift.org/swift-book/ReferenceManual/zzSummaryOfTheGrammar.html)
 - [Swift Standard Library](https://developer.apple.com/documentation/swift/swift_standard_library)
-
-**Community**
-
+- `.swiftinterface` files in: `/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/swift`
 - [DougGregor/swift-concurrency-objc](https://github.com/DougGregor/swift-concurrency-objc)
 - [textmate/swift.tmbundle](https://github.com/textmate/swift.tmbundle)
-- [wbond/swift-for-sublime](https://github.com/wbond/swift-for-sublime) (`floating-point-literal` and `string-literal` are modified version of this package)
+- [wbond/swift-for-sublime](https://github.com/wbond/swift-for-sublime) (`floating-point-literal` and `string-literal` are modified version of this package 🙏)
 - [GregoryBL/SwiftSyntax](https://github.com/GregoryBL/SwiftSyntax)
 
 ## Other Fundamental Packages for Swift
