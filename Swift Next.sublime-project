@@ -10,10 +10,16 @@
         "index_exclude_patterns": [
             "*.swift"
         ],
+        // LSP
         "lsp_format_on_save": false,
         "LSP": {
             "SourceKit": {
                 "enabled": false
+            },
+            "LSP-yaml": {
+                "settings": {
+                    "yaml.format.printWidth": 100
+                }
             }
         }
     }
