@@ -930,9 +930,7 @@ contexts:
         | \s*\b(_)\b          \s*           (?:(,)|(?=\)))  # _, or _)
         )
       captures:
-        1:
-          variable.parameter.external-parameter-name.swift
-          variable.language.wildcard.swift
+        1: variable.parameter.external-parameter-name.swift variable.language.wildcard.swift
         2: variable.other.local-parameter-name.swift
         3: punctuation.separator.annotation.type-annotation.swift
         4: variable.parameter.external-parameter-name.swift
@@ -940,9 +938,7 @@ contexts:
         6: punctuation.separator.annotation.type-annotation.swift
         7: variable.parameter.external-parameter-name.swift
         8: punctuation.separator.annotation.type-annotation.swift
-        9:
-          variable.parameter.external-parameter-name.swift
-          variable.language.wildcard.swift
+        9: variable.parameter.external-parameter-name.swift variable.language.wildcard.swift
         10: punctuation.separator.annotation.type-annotation.swift
     # fallback
     - match: ':'
