@@ -266,7 +266,7 @@ contexts:
       captures:
         0: comment.line.double-slash.swift
         1: punctuation.definition.comment.begin.swift
-        2: meta.toc-list.swift comment.line.swift
+        2: meta.toc-list.swift comment.line.swift markup.bold.swift
 
   comment-block-doc:
     - match: /\*\*
