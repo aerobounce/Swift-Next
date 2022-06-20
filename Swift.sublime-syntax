@@ -258,7 +258,22 @@ contexts:
       push: Swift - Markup.sublime-syntax
 
   comment-line:
-    - match: (//)\s*(?:((?:MARK|TODO):.*)|.*)$
+    - match: (//)\s*(?=\b(?:TODO|FIXME)\b)
+      captures:
+        0: comment.line.double-slash.swift
+        1: punctuation.definition.comment.begin.swift
+      push:
+        - meta_content_scope: meta.toc-list.todo.swift
+        - match: ^(?!\s*//)|(?=\s*//\s*$)
+          pop: 1
+        - match: ^\s*(//)
+          captures:
+            0: comment.line.double-slash.swift
+            1: punctuation.definition.comment.begin.swift
+        - match: .+
+          scope: comment.line.swift markup.bold.swift
+
+    - match: (//)\s*(?:(MARK:.*)|.*)$
       captures:
         0: comment.line.double-slash.swift
         1: punctuation.definition.comment.begin.swift
