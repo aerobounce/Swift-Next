@@ -13,6 +13,7 @@ source.swift meta.toc-list.todo comment.line
         <key>symbolTransformation</key>
         <string><![CDATA[
             s/\s*\/\/\s*/ /g;
+            s/(.{95}).+/\1/g;
         ]]></string>
     </dict>
 </dict>
