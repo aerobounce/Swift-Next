@@ -71,7 +71,7 @@ contexts:
 
     - match: |-
         (?xi:
-          (?:^\s*(///))?
+          (?:\s*(///))?
           (\s*-\s+)
           (?:\b(Parameter)\b\s+)?
           \b([\w\d]+)\b
@@ -82,8 +82,7 @@ contexts:
         2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
         3: markup.bold.markdown punctuation.definition.annotation.swift
         4: variable.parameter.swift
-      push:
-        - markdown-without-indented-code-block
+      push: markdown-without-indented-code-block
 
   ### [ Overridden Contexts ] ###########################################################
 
@@ -112,7 +111,9 @@ contexts:
     - include: markdown-others
 
   markdown-without-indented-code-block:
-    - match: ^\s*///\s*$|^(?!\s*///)
+    - meta_scope: comment.line.documentation.swift
+
+    - match: ^(?=\s*///\s*$)|^(?!\s*///)
       pop: 1
     - match: ^(?=\s*///\s*-)
       pop: 1
@@ -245,12 +246,12 @@ contexts:
     - include: comment-punctuation
 
   list-paragraph:
-    - match: '^(?=(?:[ ]{4}|\t){2,}(?![>+*\s-]))(?={{indented_code_block}})'
+    - match: '(?=(?:[ ]{4}|\t){2,}(?![>+*\s-]))(?={{indented_code_block}})'
       push:
         - include: indented-code-block
         - match: $
           pop: true
-    - match: ^[ ]*{{block_quote}}
+    - match: '[ ]*{{block_quote}}'
       captures:
         1: punctuation.definition.blockquote.markdown
       push:
@@ -258,35 +259,34 @@ contexts:
         - block-quote-content
     - include: fenced-code-blocks
     - include: reference-link-definition
-    # - match: \s+(?=\S)
-    #   push:
-    #     # - match: ^\s*$
-    #     - match: $
-    #       pop: true
-    #     - match: ([ ]*)([*+-])((?:[ ](\[[ xX]\]))?\s)
-    #       captures:
-    #         1: markup.list.unnumbered.markdown
-    #         2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
-    #         3: markup.list.unnumbered.markdown
-    #         4: constant.language.checkbox.markdown-gfm
-    #       push:
-    #         - clear_scopes: 1
-    #         - meta_content_scope: markup.list.unnumbered.markdown meta.paragraph.list.markdown
-    #         - include: list-content
-    #     - match: ([ ]*)(\d+([.)]))(?=\s)
-    #       captures:
-    #         1: markup.list.numbered.markdown
-    #         2: markup.list.numbered.bullet.markdown
-    #         3: punctuation.definition.list_item.markdown
-    #       push:
-    #         - clear_scopes: 1
-    #         - meta_content_scope: markup.list.numbered.markdown meta.paragraph.list.markdown
-    #         - include: list-content
-    #     - match: \s+
-    #       scope: meta.paragraph.list.markdown
-    #     - match: (?=^{{atx_heading}})
-    #       pop: true
-    #     - match: '(?=\S)'
-    #       push: list-content
+    - match: \s+(?=\S)
+      push:
+        - match: ^|$|(?=///)
+          pop: true
+        - match: ([ ]*)([*+-])((?:[ ](\[[ xX]\]))?\s)
+          captures:
+            1: markup.list.unnumbered.markdown
+            2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+            3: markup.list.unnumbered.markdown
+            4: constant.language.checkbox.markdown-gfm
+          push:
+            - clear_scopes: 1
+            - meta_content_scope: markup.list.unnumbered.markdown meta.paragraph.list.markdown
+            - include: list-content
+        - match: ([ ]*)(\d+([.)]))(?=\s)
+          captures:
+            1: markup.list.numbered.markdown
+            2: markup.list.numbered.bullet.markdown
+            3: punctuation.definition.list_item.markdown
+          push:
+            - clear_scopes: 1
+            - meta_content_scope: markup.list.numbered.markdown meta.paragraph.list.markdown
+            - include: list-content
+        - match: \s+
+          scope: meta.paragraph.list.markdown
+        - match: (?={{atx_heading}})
+          pop: true
+        - match: '(?=\S)'
+          push: list-content
     - match: '(?=\S)'
       pop: true
