@@ -14,19 +14,19 @@
 
 ## Features
 
-- Well integrated with Sublime Text
-- Basic documentation markup support
-- Xcode style symbol list
-- Includes Swift snippets imported from Xcode
+- Well Integrated with Sublime Text
+- Supports [Documentation Comment Syntax](https://github.com/apple/swift/blob/main/docs/DocumentationComments.md)
+- Supports `MARK:` `TODO:` `FIXME:`
+- Xcode-style Symbol List
+- Shipped with all the Swift snippets from Xcode tuned for Sublime Text
 
 <img width="610" src="https://user-images.githubusercontent.com/10491362/174356891-ca7d6254-3a94-4a66-a65e-9a6ce261d0e4.png">
 <img width="600" src="https://user-images.githubusercontent.com/10491362/174356902-3461b350-bfed-41fa-89e1-7a5d58a29362.png">
 
 ## Status
 
-- Based on Swift 5.6 (some accepted / implemented proposals are supported in advance).
-    - Full support of the version, except corner cases which are assumed to be exist.
-- Older Swift versions are not supported (aka deprecated or retired syntax).
+- Full support of Swift 5.6 (some accepted / implemented proposals are supported in advance).
+- Older Swift versions (deprecated or retired syntax) are not supported, and not in plan.
 - Is under the manual visual test against all the swift files in [apple/swift](https://github.com/apple/swift) repository.
 
 **TODO**
@@ -34,7 +34,7 @@
 - [ ] Resolve TODOs left in files
 - [ ] Squash corner cases that scope goes wrong
 - [ ] Remove commented matches left for debugging purpose
-- [ ] Better documentation markup support
+- [x] Better documentation markup support
 - [ ] Add tests
 - [ ] Add build system (if cross-platform is possible?)
 
@@ -64,7 +64,7 @@ $ rg '@\w+' -g '*.swiftinterface' | subl
 
 ## References
 
-> If you are to create a syntax definition file for the first time without deep regex background like me, those are everything you need.
+> If you are to create a syntax definition file for the first time without deep regex background like me, here's everything you need.
 
 **Sublime Text**
 
