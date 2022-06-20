@@ -710,37 +710,38 @@ contexts:
     - match: \bswitch\b(?=\s+[{{identifier_character}}.]+)
       scope: keyword.control.conditional.switch.swift
       push:
-        - meta_scope: meta.block.swift
-        - match: \}
-          scope: punctuation.section.block.end.swift
-          pop: 1
         - match: \{
           scope: punctuation.section.block.begin.swift
-        - match: \b(?:(case)|(default))\b
-          captures:
-            1: keyword.control.conditional.case.swift
-            2: keyword.control.conditional.default.swift
-          push:
-            - match: ':'
-              scope: punctuation.separator.swift
+          set:
+            - meta_scope: meta.block.swift
+            - match: \}
+              scope: punctuation.section.block.end.swift
               pop: 1
-            - match: \b(?:(var)|(let))\b
+            - match: \b(?:(case)|(default))\b
               captures:
-                1: keyword.declaration.var.swift
-                2: keyword.declaration.let.swift
-            - match: (\.)({{identifier}})
-              captures:
-                1: punctuation.accessor.dot.swift
-                2: constant.other.swift
-            - include: parameter-list
-            - include: punctuations
+                1: keyword.control.conditional.case.swift
+                2: keyword.control.conditional.default.swift
+              push:
+                - match: ':'
+                  scope: punctuation.separator.swift
+                  pop: 1
+                - match: \b(?:(var)|(let))\b
+                  captures:
+                    1: keyword.declaration.var.swift
+                    2: keyword.declaration.let.swift
+                - match: (\.)({{identifier}})
+                  captures:
+                    1: punctuation.accessor.dot.swift
+                    2: constant.other.swift
+                - include: parameter-list
+                - include: punctuations
+                - include: statements-scope-block
+                - include: statements-scope-any
             - include: statements-scope-block
             - include: statements-scope-any
-        - include: statements-scope-block
-        - include: statements-scope-any
-        - match: '{{identifier}}'
-          # scope: invalid.swift
-        - include: else-pop
+            - match: '{{identifier}}'
+              # scope: invalid.swift
+            - include: else-pop
 
     - match: \b(?:(switch)|(default))\b
       captures:
