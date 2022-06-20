@@ -2,54 +2,35 @@
 ---
 name: Swift Markup
 scope: source.swift
-version: 2
+extends: Packages/Markdown/Markdown.sublime-syntax
 hidden: true
 
-# This is very basic support for markups.
+variables:
+  # override
+  setext_escape: ^(?=\s*///[ ]{,3}(?:=+|-+)\s*$)
+
 contexts:
-  main:
+  prototype:
+    - match: ^(?!\s*///)
+      pop: true
     - include: parameters
-    - include: workarounds
-    - include: markdown
 
-  # Matches are taken from and modified Markdown.sublime-syntax.
-  markdown:
-    - match: (^|[ ]+)([*+-])( (\[[ xX]\]))?(?=\s)
+  comment-punctuation:
+    - match: ^\s*(///)[ ]?
       captures:
-        1: markup.list.unnumbered.markdown
-        2:
-          markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
-        3: markup.list.unnumbered.markdown
-        4: constant.language.checkbox.markdown-gfm
+        1: punctuation.definition.comment.begin.swift
 
-    - match: (^|[ ]+)(\d+([.]))(?=\s)(?!$)
+  comment-punctuation-pop:
+    - match: ^\s*(///)\s*$
       captures:
-        1: markup.list.numbered.markdown
-        2: markup.list.numbered.bullet.markdown
-        3: punctuation.definition.list_item.markdown
-
-    # code-span:
-    - match: (`+)(?!`)
-      scope: punctuation.definition.raw.begin.markdown
-      push:
-        - meta_scope: markup.raw.inline.markdown
-        - match: \1(?!`)
-          scope: punctuation.definition.raw.end.markdown
-          pop: 1
-        - match: $
-          pop: 1
-        - match: '`+'
-        - match: ^\s*$\n?
-          scope: invalid.illegal.non-terminated.raw.markdown
-          pop: 1
-
-    - include: Packages/Markdown/Markdown.sublime-syntax#atx-heading
-    - include: Packages/Markdown/Markdown.sublime-syntax#strikethrough
+        1: punctuation.definition.comment.begin.swift
+      pop: true
 
   # https://github.com/apple/swift/blob/main/docs/DocumentationComments.md
   parameters:
     - match: |-
         (?xi:
+          ^\s*(///)
           (\s*-\s+)
           \b(
             Parameters
@@ -80,22 +61,206 @@ contexts:
           (?=\:)
         )
       captures:
-        1:
-          markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
-        2: markup.bold.markdown punctuation.definition.annotation.swift
+        1: punctuation.definition.comment.begin.swift
+        2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+        3: markup.bold.markdown punctuation.definition.annotation.swift
 
     - match: |-
         (?xi:
+          ^\s*(///)
           (\s*-\s+)
           (?:\b(Parameter)\b\s+)?
           \b([\w\d]+)\b
           (?=\:)
         )
       captures:
-        1:
-          markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
-        2: markup.bold.markdown punctuation.definition.annotation.swift
-        3: variable.parameter.swift
+        1: punctuation.definition.comment.begin.swift
+        2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+        3: markup.bold.markdown punctuation.definition.annotation.swift
+        4: variable.parameter.swift
 
-  workarounds:
-    - match: \\
+  ### [ Overridden Contexts ] ###########################################################
+
+  main:
+    - include: frontmatter
+    - match: ''
+      set:
+        - - match: ''
+          - meta_scope: comment.line.documentation.swift
+            pop: true
+        - markdown
+
+  markdown:
+    - match: |-
+        (?x)^
+        \s*(///)[ ]?
+        (?=  {{block_quote}}
+        |    {{indented_code_block}}(?!$)
+        |    {{atx_heading}}
+        |    {{thematic_break}}
+        |    {{table_first_row}}
+        )
+      comment: |
+        We could also use an empty end match and set
+                        applyEndPatternLast, but then we must be sure that the begin
+                        pattern will only match stuff matched by the sub-patterns.
+      captures:
+        1: punctuation.definition.comment.begin.swift
+      push:
+        - meta_scope: meta.block-level.markdown
+        - include: block-quotes
+        - include: ligatures
+        - include: indented-code-block
+        - include: atx-heading
+        - include: thematic-break
+        - include: table
+        - match: ''
+          pop: true
+    - match: (?:^\s*)?///([ ]{0,3})([*+-])( (\[[ xX]\]))?(?=\s)
+      captures:
+        1: markup.list.unnumbered.markdown
+        2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+        3: markup.list.unnumbered.markdown
+        4: constant.language.checkbox.markdown-gfm
+      push:
+        - meta_content_scope: markup.list.unnumbered.markdown
+        - match: ^(?=\S)
+          pop: true
+        - include: list-paragraph
+    - match: (?:^\s*)?///([ ]{0,3})(\d+([.)]))(?=\s)
+      captures:
+        1: markup.list.numbered.markdown
+        2: markup.list.numbered.bullet.markdown
+        3: punctuation.definition.list_item.markdown
+      push:
+        - meta_content_scope: markup.list.numbered.markdown
+        - match: ^(?=\S)
+          pop: true
+        - include: list-paragraph
+    - match: '^\s*///[ ]{0,3}(?=<((?i:pre))\b)'
+      comment: Markdown formatting is disabled inside block-level tags.
+      push: [disabled-markdown-pop-at-eol, disable-markdown-pop-at-tag]
+    - match: '^\s*///[ ]{0,3}(?=<{{html_tag_block_end_at_close_tag}})'
+      comment: Markdown formatting is disabled inside block-level tags.
+      push: [disabled-markdown-pop-at-eol, disable-markdown-pop-after-tag]
+    - match: '^\s*///[ ]{0,3}(?=<\?)'
+      comment: Markdown formatting is disabled inside preprocessor instructions.
+      push: [disabled-markdown-pop-at-eol, disable-markdown-pop-at-php]
+    - match: '^\s*///[ ]{0,3}(?=<!(?:[A-Z]|--))'
+      comment: Markdown formatting is disabled inside doctype declarations and comments.
+      push: [disabled-markdown-pop-at-eol, disable-markdown-pop-after-html-doctype]
+    - match: '^\s*///[ ]{0,3}(?=<!\[CDATA\[)'
+      comment: Markdown formatting is disabled inside CDATA.
+      push: [disabled-markdown-pop-at-eol, disable-markdown-pop-after-cdata]
+    - match:
+        '^[
+        ]{0,3}(?=(?:{{html_tag_open_commonmark}}|{{html_tag_close_commonmark}})\s*$|<{{html_tag_block_end_at_blank_line}})'
+      comment:
+        Markdown formatting is disabled inside block level tags and if a complete HTML tag is the
+        only thing on the line.
+      push: [disabled-markdown-pop-at-eol, disable-markdown-pop-at-blank-line]
+    - match: |-
+        (?x:
+            \s*                        # Leading whitespace
+            (\[)(\^[^]]*)(\])(:)       # Reference name
+            [ \t]*                     # Optional whitespace
+        )
+      captures:
+        1: punctuation.definition.constant.begin.markdown
+        2: entity.name.reference.link.markdown
+        3: punctuation.definition.constant.end.markdown
+        4: punctuation.separator.key-value.markdown
+      push:
+        - meta_scope: meta.link.reference.def.footnote.markdown-extra
+        - match: ^(?![ ]{4}|$)
+          pop: true
+        - include: inline-bold-italic
+    - include: reference-link-definition
+    - include: fenced-code-blocks
+    - include: setext-heading-or-paragraph
+
+  setext-heading-or-paragraph:
+    # A paragraph may start with a line of equal signs which must not be matched
+    # as heading underline. This is achieved by consuming them here, which also
+    # applies `meta.paragraph` scope as expected.
+    # A line of dashes is already matched as thematic break and thus ignored.
+    - match: '[ ]+(?:=+|(?=\S))'
+      branch_point: setext-heading-or-paragraph
+      branch:
+        - paragraph
+        - setext-heading2
+        - setext-heading1
+
+  paragraph-end:
+    - match: |-
+        (?x)                            # pop out of this context if one of the following conditions are met:
+        ^(?=
+          \s*///
+          | \s*$                          # the line is blank (or only contains whitespace)
+          | {{atx_heading}}             # an ATX heading begins the line
+          | {{block_quote}}             # a blockquote begins the line
+          | {{fenced_code_block_start}} # a fenced codeblock begins the line
+          | {{thematic_break}}          # line is a thematic beak
+          | [ ]{,3}1[.)]\s              # an ordered list item with number "1" begins the line
+          | [ ]{,3}[*+-]\s              # an unordered list item begins the line
+          | [ ]{,3}<(?:                 # all types of HTML blocks except type 7 may interrupt a paragraph
+              {{html_tag_block_end_at_close_tag}}   # 1
+            | !--                                   # 2
+            | \?                                    # 3
+            | ![A-Z]                                # 4
+            | !\[CDATA\[                            # 5
+            | {{html_tag_block_end_at_blank_line}}  # 6
+          ) )
+      pop: true
+
+    # Reset paragraph context
+    - include: comment-punctuation-pop
+    # Consume leading comment punctuation
+    - include: comment-punctuation
+
+  list-paragraph:
+    - match: '^(?=(?:[ ]{4}|\t){2,}(?![>+*\s-]))(?={{indented_code_block}})'
+      push:
+        - include: indented-code-block
+        - match: $
+          pop: true
+    - match: ^[ ]*{{block_quote}}
+      captures:
+        1: punctuation.definition.blockquote.markdown
+      push:
+        - block-quote-meta
+        - block-quote-content
+    - include: fenced-code-blocks
+    - include: reference-link-definition
+    # - match: \s+(?=\S)
+    #   push:
+    #     # - match: ^\s*$
+    #     - match: $
+    #       pop: true
+    #     - match: ([ ]*)([*+-])((?:[ ](\[[ xX]\]))?\s)
+    #       captures:
+    #         1: markup.list.unnumbered.markdown
+    #         2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
+    #         3: markup.list.unnumbered.markdown
+    #         4: constant.language.checkbox.markdown-gfm
+    #       push:
+    #         - clear_scopes: 1
+    #         - meta_content_scope: markup.list.unnumbered.markdown meta.paragraph.list.markdown
+    #         - include: list-content
+    #     - match: ([ ]*)(\d+([.)]))(?=\s)
+    #       captures:
+    #         1: markup.list.numbered.markdown
+    #         2: markup.list.numbered.bullet.markdown
+    #         3: punctuation.definition.list_item.markdown
+    #       push:
+    #         - clear_scopes: 1
+    #         - meta_content_scope: markup.list.numbered.markdown meta.paragraph.list.markdown
+    #         - include: list-content
+    #     - match: \s+
+    #       scope: meta.paragraph.list.markdown
+    #     - match: (?=^{{atx_heading}})
+    #       pop: true
+    #     - match: '(?=\S)'
+    #       push: list-content
+    - match: '(?=\S)'
+      pop: true

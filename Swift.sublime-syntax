@@ -253,13 +253,9 @@ contexts:
     - include: comment-block
 
   comment-line-doc:
-    - match: ///
+    - match: (?=///)
       scope: punctuation.definition.comment.begin.swift
-      push:
-        - meta_scope: comment.line.documentation.swift
-        - match: $
-          pop: 1
-        - include: Swift - Markup.sublime-syntax
+      push: Swift - Markup.sublime-syntax
 
   comment-line:
     - match: (//)\s*(?:(MARK:.*)|.*)$
@@ -276,7 +272,6 @@ contexts:
         - match: \*/(?!.*?\*/)
           scope: punctuation.definition.comment.end.swift
           pop: 1
-        - include: Swift - Markup.sublime-syntax
 
   comment-block:
     - match: /\*
