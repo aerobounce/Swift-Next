@@ -264,7 +264,7 @@ contexts:
         1: punctuation.definition.comment.begin.swift
       push:
         - meta_content_scope: meta.toc-list.todo.swift
-        - match: ^(?!\s*//)|(?=\s*//\s*$)
+        - match: ^(?!\s*//)|(?=\s*//\s*$)|(?=(//)\s*\b(?:TODO|FIXME)\b)
           pop: 1
         - match: ^\s*(//)
           captures:

@@ -5,7 +5,11 @@ scope: source.swift
 extends: Packages/Markdown/Markdown.sublime-syntax
 hidden: true
 
+# [ TODO: Markdown.sublime-syntax is incompatible with the newer regex engine ] #
+# Would embedding this file affect its parent syntax file internally?
+
 variables:
+  three_slashes: \s*(///)[ ]?
   # override
   setext_escape: ^(?=\s*///[ ]{,3}(?:=+|-+)\s*$)
 
@@ -13,10 +17,10 @@ contexts:
   prototype:
     - match: ^(?!\s*///)
       pop: true
-    - include: parameters
+    - include: documentation-comment-syntax
 
   comment-punctuation:
-    - match: ^\s*(///)[ ]?
+    - match: ^{{three_slashes}}
       captures:
         1: punctuation.definition.comment.begin.swift
 
@@ -27,7 +31,7 @@ contexts:
       pop: true
 
   # https://github.com/apple/swift/blob/main/docs/DocumentationComments.md
-  parameters:
+  documentation-comment-syntax:
     - match: |-
         (?xi:
           ^\s*(///)
@@ -67,7 +71,7 @@ contexts:
 
     - match: |-
         (?xi:
-          ^\s*(///)
+          (?:^\s*(///))?
           (\s*-\s+)
           (?:\b(Parameter)\b\s+)?
           \b([\w\d]+)\b
@@ -78,6 +82,8 @@ contexts:
         2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
         3: markup.bold.markdown punctuation.definition.annotation.swift
         4: variable.parameter.swift
+      push:
+        - markdown-without-indented-code-block
 
   ### [ Overridden Contexts ] ###########################################################
 
@@ -93,29 +99,49 @@ contexts:
   markdown:
     - match: |-
         (?x)^
-        \s*(///)[ ]?
+        {{three_slashes}}
         (?=  {{block_quote}}
         |    {{indented_code_block}}(?!$)
         |    {{atx_heading}}
         |    {{thematic_break}}
         |    {{table_first_row}}
         )
-      comment: |
-        We could also use an empty end match and set
-                        applyEndPatternLast, but then we must be sure that the begin
-                        pattern will only match stuff matched by the sub-patterns.
       captures:
         1: punctuation.definition.comment.begin.swift
-      push:
-        - meta_scope: meta.block-level.markdown
-        - include: block-quotes
-        - include: ligatures
-        - include: indented-code-block
-        - include: atx-heading
-        - include: thematic-break
-        - include: table
-        - match: ''
-          pop: true
+      push: markdown-block-level
+    - include: markdown-others
+
+  markdown-without-indented-code-block:
+    - match: ^\s*///\s*$|^(?!\s*///)
+      pop: 1
+    - match: ^(?=\s*///\s*-)
+      pop: 1
+
+    - match: |-
+        (?x)^
+        {{three_slashes}}
+        (?=  {{block_quote}}
+        |    {{atx_heading}}
+        |    {{thematic_break}}
+        |    {{table_first_row}}
+        )
+      captures:
+        1: punctuation.definition.comment.begin.swift
+      push: markdown-block-level
+    - include: markdown-others
+
+  markdown-block-level:
+    - meta_scope: meta.block-level.markdown
+    - include: block-quotes
+    - include: ligatures
+    - include: indented-code-block
+    - include: atx-heading
+    - include: thematic-break
+    - include: table
+    - match: ''
+      pop: true
+
+  markdown-others:
     - match: (?:^\s*)?///([ ]{0,3})([*+-])( (\[[ xX]\]))?(?=\s)
       captures:
         1: markup.list.unnumbered.markdown
@@ -195,7 +221,7 @@ contexts:
     - match: |-
         (?x)                            # pop out of this context if one of the following conditions are met:
         ^(?=
-          \s*///
+          # (\s*///)
           | \s*$                          # the line is blank (or only contains whitespace)
           | {{atx_heading}}             # an ATX heading begins the line
           | {{block_quote}}             # a blockquote begins the line
