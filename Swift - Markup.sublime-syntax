@@ -34,7 +34,7 @@ contexts:
   documentation-comment-syntax:
     - match: |-
         (?xi:
-          ^\s*(///)
+          \s*(///)
           (\s*-\s+)
           \b(
             Parameters
