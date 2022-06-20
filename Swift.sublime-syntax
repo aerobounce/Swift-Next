@@ -258,7 +258,7 @@ contexts:
       push: Swift - Markup.sublime-syntax
 
   comment-line:
-    - match: (//)\s*(?:(MARK:.*)|.*)$
+    - match: (//)\s*(?:((?:MARK|TODO):.*)|.*)$
       captures:
         0: comment.line.double-slash.swift
         1: punctuation.definition.comment.begin.swift
