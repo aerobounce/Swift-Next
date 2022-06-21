@@ -222,8 +222,8 @@ contexts:
     - match: |-
         (?x)                            # pop out of this context if one of the following conditions are met:
         ^(?=
-          # (\s*///)
-          | \s*$                          # the line is blank (or only contains whitespace)
+            (?!\s*///)
+          | \s*$                        # the line is blank (or only contains whitespace)
           | {{atx_heading}}             # an ATX heading begins the line
           | {{block_quote}}             # a blockquote begins the line
           | {{fenced_code_block_start}} # a fenced codeblock begins the line
@@ -237,10 +237,13 @@ contexts:
             | ![A-Z]                                # 4
             | !\[CDATA\[                            # 5
             | {{html_tag_block_end_at_blank_line}}  # 6
-          ) )
+          )
+        )
       pop: true
 
     # Reset paragraph context
+    - match: (?={{three_slashes}}[ ]{4})
+      pop: true
     - include: comment-punctuation-pop
     # Consume leading comment punctuation
     - include: comment-punctuation
@@ -290,3 +293,33 @@ contexts:
           push: list-content
     - match: '(?=\S)'
       pop: true
+
+  code-span:
+    - match: (`{3})(?!`)
+      scope: punctuation.definition.raw.begin.markdown
+      push:
+        - match: \1(?!`)
+          scope: punctuation.definition.raw.end.markdown
+          pop: true
+        - match: '{{three_slashes}}'
+        - match: (.+?)(?=`+|$)
+          scope: markup.raw.inline.markdown
+        - match: '`+'
+        - match: ^\s*$\n?
+          scope: invalid.illegal.non-terminated.raw.markdown
+          pop: true
+        - include: paragraph-end
+    - match: (`+)(?!`)
+      scope: punctuation.definition.raw.begin.markdown markup.raw.inline.markdown
+      push:
+        - match: \1(?!`)
+          scope: punctuation.definition.raw.end.markdown markup.raw.inline.markdown
+          pop: true
+        - match: '{{three_slashes}}'
+        - match: (.+?)(?=`+|$)
+          scope: markup.raw.inline.markdown
+        - match: '`+'
+        - match: ^\s*$\n?
+          scope: invalid.illegal.non-terminated.raw.markdown
+          pop: true
+        - include: paragraph-end
