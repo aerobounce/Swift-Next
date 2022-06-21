@@ -7,18 +7,12 @@
     <img src="https://img.shields.io/badge/Sublime%20Text-4+-green.svg"></img>
 </p>
 
-## The Goal
-
-- Port the Grammar of Swift Language to `.sublime-syntax`
-- Follow Xcode highlighting and behavior while retaining maximum integration with Sublime Text
-
 ## Features
 
-- Well Integrated with Sublime Text
 - Supports [Documentation Comment Syntax](https://github.com/apple/swift/blob/main/docs/DocumentationComments.md)
 - Supports `MARK:` `TODO:` `FIXME:`
 - Xcode-style Symbol List
-- Shipped with all the Swift snippets from Xcode tuned for Sublime Text
+- Ships with all the Swift snippets from Xcode tuned for Sublime Text
 
 <img width="610" src="https://user-images.githubusercontent.com/10491362/174356891-ca7d6254-3a94-4a66-a65e-9a6ce261d0e4.png">
 <img width="600" src="https://user-images.githubusercontent.com/10491362/174356902-3461b350-bfed-41fa-89e1-7a5d58a29362.png">
