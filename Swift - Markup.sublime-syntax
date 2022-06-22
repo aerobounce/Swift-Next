@@ -17,7 +17,6 @@ contexts:
   prototype:
     - match: ^(?!\s*///)
       pop: true
-    - include: documentation-comment-syntax
 
   comment-punctuation:
     - match: ^{{three_slashes}}
@@ -82,7 +81,7 @@ contexts:
         2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
         3: markup.bold.markdown punctuation.definition.annotation.swift
         4: variable.parameter.swift
-      push: markdown-without-indented-code-block
+      push: documentation-comment-syntax-markdown
 
   ### [ Overridden Contexts ] ###########################################################
 
@@ -108,14 +107,17 @@ contexts:
       captures:
         1: punctuation.definition.comment.begin.swift
       push: markdown-block-level
+
+    - include: documentation-comment-syntax
     - include: markdown-others
 
-  markdown-without-indented-code-block:
-    - meta_scope: comment.line.documentation.swift
-
-    - match: ^(?=\s*///\s*$)|^(?!\s*///)
-      pop: 1
-    - match: ^(?=\s*///\s*-)
+  documentation-comment-syntax-markdown:
+    - match: |-
+        (?x:
+            ^(?=\s*///\s*$)
+          | ^(?=\s*///\s*-)
+          | ^(?!\s*///)
+        )
       pop: 1
 
     - match: |-
@@ -129,6 +131,7 @@ contexts:
       captures:
         1: punctuation.definition.comment.begin.swift
       push: markdown-block-level
+
     - include: markdown-others
 
   markdown-block-level:
@@ -221,9 +224,8 @@ contexts:
   paragraph-end:
     - match: |-
         (?x)                            # pop out of this context if one of the following conditions are met:
-        ^(?=
-            (?!\s*///)
-          | \s*$                        # the line is blank (or only contains whitespace)
+        (?=
+            \s*$                        # the line is blank (or only contains whitespace)
           | {{atx_heading}}             # an ATX heading begins the line
           | {{block_quote}}             # a blockquote begins the line
           | {{fenced_code_block_start}} # a fenced codeblock begins the line
@@ -242,6 +244,8 @@ contexts:
       pop: true
 
     # Reset paragraph context
+    - match: ^(?!\s*///)
+      pop: true
     - match: (?={{three_slashes}}[ ]{4})
       pop: true
     - include: comment-punctuation-pop
