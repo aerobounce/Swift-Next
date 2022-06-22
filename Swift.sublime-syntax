@@ -1383,6 +1383,14 @@ contexts:
       push:
         - - meta_scope: meta.operator.swift
           - include: immediately-pop
+        - - match: ':'
+            scope: punctuation.separator.swift
+            push:
+              - - match: '{{non_reserved_identifier}}'
+                  scope: support.other.precedencegroup.swift
+                  pop: 2
+                - include: else-pop
+          - include: else-pop
         - - match: ({{operator}}|{{dot_operator}})
             captures:
               1: entity.name.operator.swift
@@ -1433,6 +1441,8 @@ contexts:
           scope: punctuation.section.block.end.swift
           pop: 2
 
+        - match: ':'
+          scope: punctuation.separator.swift
         - match: \b(?:(higherThan|lowerThan)|(assignment)|(associativity))\b
           captures:
             1: keyword.declaration.precedencegroup.relation.swift
