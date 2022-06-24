@@ -1,6 +1,6 @@
 
 <h1 align="center">Swift Next</h1>
-<h3 align="center">Modern Swift syntax definition for Sublime Text 4 in async/await era.</h3>
+<h3 align="center">Swift syntax package in async/await era</h3>
 
 <p align="center">
     <img src="https://img.shields.io/badge/Swift%20-5.6+-orange.svg"></img>
@@ -9,22 +9,20 @@
 
 ## Features
 
+- Full support of Swift 5.6 (some accepted / implemented proposals are supported in advance).
+    - Older Swift versions (deprecated or retired syntax) are not supported, and not in plan.
 - Supports [Documentation Comment Syntax](https://github.com/apple/swift/blob/main/docs/DocumentationComments.md)
 - Supports `MARK:` `TODO:` `FIXME:`
 - Xcode-style Symbol List
 - Ships with all the Swift snippets from Xcode tuned for Sublime Text
+- Compatible with the new regex engine of Sublime Text
 
 <img width="610" src="https://user-images.githubusercontent.com/10491362/174356891-ca7d6254-3a94-4a66-a65e-9a6ce261d0e4.png">
 <img width="600" src="https://user-images.githubusercontent.com/10491362/174356902-3461b350-bfed-41fa-89e1-7a5d58a29362.png">
 
 ## Status
 
-- Full support of Swift 5.6 (some accepted / implemented proposals are supported in advance).
-- Older Swift versions (deprecated or retired syntax) are not supported, and not in plan.
-- Is under the manual visual test against all the swift files in [apple/swift](https://github.com/apple/swift) repository.
-
-**TODO**
-
+- [ ] Finish visual test against all the swift files in [apple/swift](https://github.com/apple/swift) repository
 - [ ] Resolve TODOs left in files
 - [ ] Squash corner cases that scope goes wrong
 - [ ] Remove commented matches left for debugging purpose
