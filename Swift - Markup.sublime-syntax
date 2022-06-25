@@ -67,6 +67,7 @@ contexts:
         1: punctuation.definition.comment.begin.swift
         2: markup.list.unnumbered.bullet.markdown punctuation.definition.list_item.markdown
         3: markup.bold.markdown punctuation.definition.annotation.swift
+      push: documentation-comment-syntax-markdown
 
     - match: |-
         (?xi:
@@ -83,7 +84,7 @@ contexts:
         4: variable.parameter.swift
       push: documentation-comment-syntax-markdown
 
-  ### [ Overridden Contexts ] ###########################################################
+  ### [ Overridden / Modified Contexts from Markdown syntax ] ###########################
 
   main:
     - include: frontmatter
