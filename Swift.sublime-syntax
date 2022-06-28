@@ -165,6 +165,7 @@ contexts:
     - include: declaration-class
     - include: declaration-actor
     - include: keyword-declarations
+    - include: modifier-operator
 
   statements-scope-parameter:
     - include: modifier-types
@@ -890,6 +891,13 @@ contexts:
     - match: (?:\s|^)(any)(?=\s)
       captures:
         1: storage.modifier.existential.swift
+
+  modifier-operator:
+    - match: \b(?:(prefix)|(postfix)|(infix))\b
+      captures:
+        1: storage.modifier.operator.prefix.swift
+        2: storage.modifier.operator.postfix.swift
+        3: storage.modifier.operator.infix.swift
 
   modifier-for-parameter:
     # in-out-expression
