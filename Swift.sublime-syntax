@@ -857,7 +857,7 @@ contexts:
         8: punctuation.section.parens.end.swift
 
   modifier-mutation:
-    - match: \b((mutating)|(nonmutating))\b(?=\s|$)
+    - match: \b(?:(mutating)|(nonmutating))\b(?=\s|$)
       captures:
         1: storage.modifier.mutation.mutating.swift
         2: storage.modifier.mutation.nonmutating.swift
