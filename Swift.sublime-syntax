@@ -581,7 +581,7 @@ contexts:
         - include: reserved-word-pop
 
     # Optional
-    - match: (?:(\?)|(\!))(?=\s*[?!.,:)\];\w]|\s|$)
+    - match: (?:(\?)|(\!))(?=\s*[?!.,:()\[\];\w]|\s|$)
       captures:
         1: keyword.operator.optional.swift
         2: keyword.operator.implicitly-unwrapped-optional.swift
@@ -1887,7 +1887,7 @@ contexts:
           ({{identifier}})
           \s*?
           (?!.*?=.*?[(\[]) # Assignment op. cannot precede the paren
-          (?=[(\[])
+          (?=\??[(\[])
           (?!.+?\)[^.,|/]+?{{identifier}}) # Another expression cannot continue
         )
       captures:
