@@ -77,7 +77,7 @@ variables:
           optional|override|postfix|precedencegroup|prefix|private|protocol|public|
           required|static|struct|subscript|typealias|unowned|var|weak|
           # Manually selected words
-          guard|if|switch
+          guard|if|switch|case
         )\b(?!\s*[:(])
         |@
       )
