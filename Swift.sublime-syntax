@@ -240,6 +240,11 @@ contexts:
       scope: invalid.illegal.unexpected-word.swift
       pop: 1
 
+  reserved-word-pop-2:
+    - match: ({{reserved_word}})
+      scope: invalid.illegal.unexpected-word.swift
+      pop: 2
+
   file-scope-word-pop:
     - match: ({{file_scope_word}})
       scope: invalid.illegal.unexpected-word.swift
@@ -1185,7 +1190,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: entity.name.function.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-enum:
@@ -1228,7 +1233,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: entity.name.enum.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-struct:
@@ -1246,7 +1251,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: entity.name.struct.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-class:
@@ -1272,7 +1277,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: entity.name.class.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-actor:
@@ -1290,7 +1295,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: keyword.symbol-list.swift entity.name.actor.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-init-deinit:
@@ -1356,7 +1361,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: keyword.symbol-list.swift entity.name.protocol.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-extension:
@@ -1380,7 +1385,7 @@ contexts:
         - include: identifier-support
         - match: '{{identifier}}'
         - include: else-pop
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
 
   declaration-operator:
     - match: \b(?:(prefix)|(postfix)|(infix))\b
@@ -1436,7 +1441,7 @@ contexts:
     - match: ({{non_reserved_identifier}})
       scope: entity.name.precedencegroup.swift
       pop: 1
-    - include: reserved-word-pop
+    - include: reserved-word-pop-2
     - include: else-pop
 
   declaration-precedencegroup-body:
