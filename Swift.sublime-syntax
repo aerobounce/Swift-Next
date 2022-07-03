@@ -1215,17 +1215,17 @@ contexts:
         - match: \bcase\b
           scope: keyword.declaration.case.swift
           push:
-            - match: (?!\bcase\b){{identifier}}
-              scope: variable.other.constant.swift
-            - match: (?=}|^$|\bcase\b|[^,\s(])
+            - match: (?=\s*=|}|\b(?:case|indirect)\b|^$)
               pop: 1
+            - match: '{{identifier}}'
+              scope: variable.other.constant.swift
             - include: parameter-list
             - include: punctuations
-            - include: reserved-word-pop
         - include: statements-scope-type-declaration
         - include: statements-scope-block
         - include: statements-scope-any
         - match: '{{identifier}}'
+          scope: variable.other.constant.swift
         - include: else-pop
     - include: else-pop
 
