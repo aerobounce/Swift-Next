@@ -74,7 +74,7 @@ variables:
           actor|associatedtype|async|class|convenience|deinit|distributed|dynamic|
           enum|extension|fileprivate|final|func|import|indirect|infix|init|
           internal|isolated|lazy|let|mutating|nonisolated|nonmutating|open|operator|
-          optional|override|postfix|precedencegroup|prefix|private|protocol|public|
+          override|postfix|precedencegroup|prefix|private|protocol|public|
           required|static|struct|subscript|typealias|unowned|var|weak|
           # Manually selected words
           guard|if|switch|case
