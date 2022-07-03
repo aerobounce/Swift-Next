@@ -1217,10 +1217,11 @@ contexts:
           push:
             - match: (?=\s*=|}|\b(?:case|indirect)\b|^$)
               pop: 1
-            - match: '{{identifier}}'
+            - match: '{{non_reserved_identifier}}'
               scope: variable.other.constant.swift
             - include: parameter-list
             - include: punctuations
+            - include: reserved-word-pop
         - include: statements-scope-type-declaration
         - include: statements-scope-block
         - include: statements-scope-any
