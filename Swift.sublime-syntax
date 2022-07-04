@@ -1888,17 +1888,11 @@ contexts:
 
   function-call:
     # function-call-expression
-    - match: |-
-        (?x:
-          ({{identifier}})
-          \s*?
-          (?!.*?=.*?[(\[]) # Assignment op. cannot precede the paren
-          (?=\??[(\[])
-          (?!.+?\)[^.,|/]+?{{identifier}}) # Another expression cannot continue
-        )
+    - match: ({{identifier}})\s*?(?=\??[(\[])
       captures:
         1: variable.function.swift
       push: parameter-list-pop
+
     # function-call-expression + trailing-closures
     # - match: |-
     #     (?x:
