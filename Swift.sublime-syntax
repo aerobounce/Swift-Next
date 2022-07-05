@@ -153,7 +153,6 @@ contexts:
     - include: modifier-mutation
     - include: modifier-actor-isolation
     - include: modifier-reference-counting
-    - include: modifier-types
 
   statements-scope-block:
     - include: declaration-constant
@@ -168,7 +167,6 @@ contexts:
     - include: modifier-operator
 
   statements-scope-parameter:
-    - include: modifier-types
     - include: modifier-for-parameter
 
   statements-scope-any:
@@ -178,6 +176,8 @@ contexts:
     # Keywords
     - include: keyword-operators
     - include: keyword-control-flows
+    # Modifiers
+    - include: modifier-types
     # Variables
     - include: variable-builtins
     # Scoped Expressions
