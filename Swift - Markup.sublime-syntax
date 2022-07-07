@@ -9,7 +9,7 @@ hidden: true
 # Would embedding this file affect its parent syntax file internally?
 
 variables:
-  three_slashes: \s*(///)[ ]?
+  three_slashes: \s*(///)[ ]
   # override
   setext_escape: ^(?=\s*///[ ]{,3}(?:=+|-+)\s*$)
 
