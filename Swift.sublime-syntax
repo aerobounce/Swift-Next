@@ -392,6 +392,7 @@ contexts:
         1: punctuation.definition.string.begin.swift
         2: invalid.illegal.content-must-begin-on-a-new-line.swift
       push:
+        - meta_include_prototype: false
         - meta_scope: meta.string.swift string.quoted.double.block.swift
         - match: ([^{{inline_space}}]*)(""")
           captures:
@@ -416,6 +417,7 @@ contexts:
     - match: \"
       scope: punctuation.definition.string.begin.swift
       push:
+        - meta_include_prototype: false
         - meta_scope: meta.string.swift string.quoted.double.swift
         - match: \"
           scope: punctuation.definition.string.end.swift
@@ -455,6 +457,7 @@ contexts:
         2: punctuation.definition.string.begin.swift
         3: invalid.illegal.content-must-begin-on-a-new-line.swift
       push:
+        - meta_include_prototype: false
         - meta_scope: meta.string.swift string.quoted.double.block.swift
         - match: ([^{{inline_space}}]*)(""")(#+)
           captures:
