@@ -1113,7 +1113,10 @@ contexts:
             8: keyword.declaration.function.swift
         - match: \.
           scope: punctuation.accessor.dot.swift
-        - include: identifier-support
+          push:
+            - match: $
+              pop: 1
+            - include: identifier-support
         - match: '{{identifier}}'
           scope: support.module.swift
 
