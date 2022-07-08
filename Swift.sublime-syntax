@@ -199,6 +199,7 @@ contexts:
     - include: attribute-builtins
     - include: attribute-custom
     # Support
+    - include: underscored-keyword
     - include: identifier-support
     - include: function-call
     # Consume all the remaining identifiers
@@ -1513,6 +1514,58 @@ contexts:
         1: meta.annotation.swift punctuation.definition.annotation.swift
         2: meta.annotation.identifier.swift support.function.annotation.swift
 
+    # swift/docs/ReferenceGuides/UnderscoredAttributes.md
+    - match: |-
+        (?x:
+          (@)\b(
+              _alignment
+            | _alwaysEmitIntoClient
+            | _assemblyVision
+            | _borrowed
+            | _cdecl
+            | _silgen_name
+            | _disfavoredOverload
+            | _dynamicReplacement
+            | _effects
+            | _exported
+            | _fixed_layout
+            | _hasInitialValue
+            | _hasMissingDesignatedInitializers
+            | _hasStorage
+            | _implementationOnly
+            | _implements
+            | _implicitSelfCapture
+            | _inheritActorContext
+            | _inheritsConvenienceInitializers
+            | _marker
+            | _nonEphemeral
+            | _nonoverride
+            | _nonSendable
+            | _objc_non_lazy_realization
+            | _optimize
+            | _originallyDefinedIn
+            | _private
+            | _semantics
+            | _show_in_interface
+            | _specialize
+            | _specializeExtension
+            | _spi
+            | _staticInitializeObjCMetadata
+            | _transparent
+            | _typeEraser
+            | _weakLinked
+            | _unsafeMainActor
+            | _unsafeSendable
+            | _noImplicitCopy
+            | _noAllocation
+            | _noLocks
+            | _unavailableFromAsync
+          )\b
+        )
+      captures:
+        1: meta.annotation.swift punctuation.definition.annotation.swift
+        2: meta.annotation.identifier.swift support.function.annotation.underscored.swift
+
   attribute-custom:
     - match: (@)\s*({{identifier}})\s*(\()
       captures:
@@ -1911,6 +1964,25 @@ contexts:
     #     )
     #   captures:
     #     1: variable.function.swift
+
+  underscored-keyword:
+    - match: |-
+        \b(?x:
+            _PackageDescription
+          | _linear
+          | _forward
+          | _versioned
+          | _inlineable
+          | _propertyWrapper
+          | _functionBuilder
+          | _predatesConcurrency
+          | _opaqueReturnTypeOf
+          | __shared
+          | __owned
+          | _const
+          | __consuming
+        )\b
+      scope: storage.modifier.underscored.swift
 
   identifier-support:
     # Swift Standard Library Types
