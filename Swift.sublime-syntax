@@ -718,9 +718,10 @@ contexts:
         1: keyword.control.conditional.guard.swift
 
     # switch-statement
-    - match: \bswitch\b(?=\s+[{{identifier_character}}.]+)
+    - match: \bswitch\b(?=(\s+[{{identifier_character}}.]+|\s*\())
       scope: keyword.control.conditional.switch.swift
       push:
+        - include: parameter-list
         - match: \{
           scope: punctuation.section.block.begin.swift
           set:
