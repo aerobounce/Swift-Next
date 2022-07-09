@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 set -Ceu -o pipefail
 
-cd ~/Downloads/swift-swift-5.6-RELEASE
+# Optional function to find @attributes declared in files.
+ATTRIBUTES() {
+    sort <(pcregrep \
+        --buffer-size 99999 \
+        --exclude-dir "\b(benchmark|tools|utils|test[s]?|validation-test)\b" \
+        --include "\.(swift|def)" \
+        --recursive \
+        -o1 "$(PREFIX)(@\b\w+\b)$(POSTFIX)" \
+        ~/Desktop/swift-swift-5.6-RELEASE \
+        /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/swift |
+        awk -F ':' '{ print($2) }') |
+        uniq
+}
 
 OCCURENCE() {
     readonly EXCLUDES=(
@@ -80,8 +92,10 @@ OCCURENCE() {
 }
 export -f OCCURENCE
 
+cd ~/Desktop/swift-swift-5.6-RELEASE
+
 {
     pcregrep -o1 '"(_\w+)' "lib/Parse/ParseDecl.cpp"
     pcregrep -o1 "^\w+ATTR\((\w+)" "include/swift/AST/Attr.def"
 } | sort | uniq |
-    xargs -P 4 -I {} -n 1 sh -c "OCCURENCE '{}' '$(pwd)'"
+    xargs -P 4 -I {} -n 1 sh -c "OCCURENCE '{}' '$PWD'"

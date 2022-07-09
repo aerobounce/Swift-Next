@@ -2,7 +2,7 @@
 set -Ceu -o pipefail
 # This script finds files that contains all the specified keywords.
 
-cd ~/Downloads/swift-swift-5.6-RELEASE
+cd ~/Desktop/swift-swift-5.6-RELEASE
 
 find . -type f -print0 |
     xargs -0 pcregrep -e '\b__consuming\b' -I --files-with-matches |
