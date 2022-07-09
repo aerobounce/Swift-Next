@@ -48,13 +48,6 @@
 
 **Tips**
 
-> Find attributes in swiftinterface files
-
-```sh
-$ cd /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/swift
-$ rg '@\w+' -g '*.swiftinterface' | subl
-```
-
 > Minimize multiple words into a regex pattern
 
 ```sh
