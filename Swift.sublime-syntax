@@ -411,6 +411,7 @@ contexts:
         # \ is invalid if it's not at EOL
         - match: (?=[^\s]+?\s*\\\s*[^(\s]+?)(?!\s*$)
           push:
+            - include: string-literal-content
             - match: \\
               scope: invalid.illegal.invalid-escape-sequence.swift
               pop: 1
@@ -471,6 +472,7 @@ contexts:
           scope: punctuation.separator.continuation.line.swift
         - match: (?=[^\s]+?\s*\\#\s*[^(\s]+?)(?!\s*$)
           push:
+            - include: extended-string-literal-content
             - match: \\#
               scope: invalid.illegal.invalid-escape-sequence.swift
               pop: 1
