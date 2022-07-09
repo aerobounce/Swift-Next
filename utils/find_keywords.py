@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-# This script is to find files that contains all the specified keywords.
+# This script finds files that contains all the specified keywords.
 
 from multiprocessing import Pool
 from pathlib import Path
-
 
 SWIFT_REPO = Path("~/Downloads/swift-swift-5.6-RELEASE").expanduser()
 PATTERNS: list[str] = [

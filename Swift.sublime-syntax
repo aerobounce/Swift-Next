@@ -1481,32 +1481,57 @@ contexts:
 
   ### [ Attributes ] ####################################################################
 
-  # [ TODO: Support attributes comprehensively ] #
-  # Including private attributes and annotations, such as underscored ones.
-  # swift/include/swift/AST/Attr.def seems to be a good source to observe.
-  # However, it's not clear which one is which - which one is "@" prefixed attribute?
-  # It also contains now retired attributes.
-
   attribute-builtins:
     - match: |-
         (?x:
           (@)\b(
-              GKInspectable
-            | IBAction | IBDesignable | IBInspectable | IBOutlet | IBSegueAction
-            | MainActor | Sendable
-            | NSApplicationMain | NSCopying | NSManaged | UIApplicationMain
-            | autoclosure | escaping | convention
+              MainActor
+            | unknown
+
+            | GKInspectable
+            | IBAction
+            | IBDesignable
+            | IBInspectable
+            | IBOutlet
+            | IBSegueAction
+            | LLDBDebuggerFunction
+            | NSApplicationMain
+            | NSCopying
+            | NSManaged
+            | Sendable
+            | UIApplicationMain
+
+            | autoclosure
+            | available
+            | convention
+            | derivative
+            | differentiable
             | discardableResult
             | dynamicCallable
             | dynamicMemberLookup
-            | main
+            | escaping
             | frozen
-            | inlinable | usableFromInline
-            | nonobjc | objc | objcMembers
-            | propertyWrapper | resultBuilder
+            | globalActor
+            | inlinable
+            | inline
+            | main
+            | noDerivative
+            | noescape
+            | nonobjc
+            | objc
+            | objcMembers
+            | optional
+            | preconcurrency
+            | propertyWrapper
+            | reasync
             | requires_stored_property_inits
+            | resultBuilder
+            | rethrows
             | testable
-            | unknown
+            | transpose
+            | unchecked
+            | unsafe_no_objc_tagged_pointer
+            | usableFromInline
             | warn_unqualified_access
           )\b
         )
@@ -1514,7 +1539,6 @@ contexts:
         1: meta.annotation.swift punctuation.definition.annotation.swift
         2: meta.annotation.identifier.swift support.function.annotation.swift
 
-    # swift/docs/ReferenceGuides/UnderscoredAttributes.md
     - match: |-
         (?x:
           (@)\b(
@@ -1523,13 +1547,11 @@ contexts:
             | _assemblyVision
             | _borrowed
             | _cdecl
-            | _silgen_name
             | _disfavoredOverload
             | _dynamicReplacement
             | _effects
             | _exported
             | _fixed_layout
-            | _hasInitialValue
             | _hasMissingDesignatedInitializers
             | _hasStorage
             | _implementationOnly
@@ -1537,29 +1559,34 @@ contexts:
             | _implicitSelfCapture
             | _inheritActorContext
             | _inheritsConvenienceInitializers
+            | _inlineable
             | _marker
+            | _noAllocation
+            | _noLocks
             | _nonEphemeral
-            | _nonoverride
             | _nonSendable
+            | _nonoverride
+            | _objcRuntimeName
             | _objc_non_lazy_realization
             | _optimize
             | _originallyDefinedIn
             | _private
+            | _projectedValueProperty
             | _semantics
             | _show_in_interface
+            | _silgen_name
             | _specialize
             | _specializeExtension
             | _spi
-            | _staticInitializeObjCMetadata
+            | _swift_native_objc_runtime_base
             | _transparent
             | _typeEraser
-            | _weakLinked
+            | _typeSequence
+            | _unavailableFromAsync
             | _unsafeMainActor
             | _unsafeSendable
-            | _noImplicitCopy
-            | _noAllocation
-            | _noLocks
-            | _unavailableFromAsync
+            | _versioned
+            | _weakLinked
           )\b
         )
       captures:
@@ -1969,18 +1996,15 @@ contexts:
     - match: |-
         \b(?x:
             _PackageDescription
-          | _linear
-          | _forward
-          | _versioned
-          | _inlineable
-          | _propertyWrapper
-          | _functionBuilder
-          | _predatesConcurrency
-          | _opaqueReturnTypeOf
-          | __shared
-          | __owned
+          | _assumed
           | _const
+          | _forward
+          | _linear
+
+          | __always
           | __consuming
+          | __owned
+          | __shared
         )\b
       scope: storage.modifier.underscored.swift
 
