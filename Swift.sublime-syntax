@@ -409,7 +409,7 @@ contexts:
         # Or maybe this is overkill as a syntax's feature.
 
         # \ is invalid if it's not at EOL
-        - match: (?=[^\s]+?\s*\\\s*[^0\\tnru"'(\s]+?)(?!\s*$)
+        - match: (?=[^\s]+?\s*\\(?:\s|\s*[^0\\tnru"'(\s]+?))(?!\s*$)
           push:
             - include: string-literal-content
             - match: \\
