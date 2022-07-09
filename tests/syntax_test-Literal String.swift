@@ -51,9 +51,9 @@ let mixedBase = """
 
   #"""
    \
-  invalid \ newline \
-  invalid \ newline \
-  """# //            ^ This is invalid as it is on the last line.
+  Those are all valid slashes \ newline \
+  Those are all valid slashes \ newline \
+  """#
 
   " \ invalid \ newline \ "
 //^^^^^^^^^^^^^^^^^^^^^^^^^ meta.string.swift string.quoted.double.swift
