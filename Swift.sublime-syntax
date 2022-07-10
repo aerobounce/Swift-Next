@@ -186,6 +186,7 @@ contexts:
     - include: square-brackets
     # Generics
     - include: generic-parameter-clause-call
+    # [ TODO: Add dedicated where-clause matches for control-flows ] #
     - include: generic-where-clause
     # Operator
     - include: operator-builtins
@@ -747,6 +748,8 @@ contexts:
                   captures:
                     1: punctuation.accessor.dot.swift
                     2: constant.other.swift
+                - match: \bwhere\b
+                  scope: keyword.control.conditional.where.swift
                 - include: parameter-list
                 - include: punctuations
                 - include: statements-scope-block
