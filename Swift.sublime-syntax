@@ -1624,7 +1624,7 @@ contexts:
           | (?=
               [{{generic_clause_chars_call_site}}]+>
               \s*
-              (?:[?.,(){=]|where|\s+(?://|/\*)|$)
+              (?:[!?.,(){=]|where|\s+(?://|/\*)|$)
             )
           )
         )
