@@ -984,6 +984,17 @@ contexts:
         1: keyword.operator.variadic.swift
     - match: \&
       scope: keyword.operator.protocol-composition-type.swift
+    - match: (?==)
+      push:
+        - match: \&
+          scope: keyword.operator.bitwise.swift
+        - include: keyword-declarations
+        - include: statements-scope-parameter
+        - include: declaration-constant
+        - include: declaration-variable
+        - include: statements-scope-any
+        - match: '{{identifier}}'
+        - include: else-pop
 
     - include: keyword-declarations
     - include: statements-scope-parameter
