@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -Ceu -o pipefail
+# This script finds attributes used in Swift
+# including private ones, based on keywords found in:
+#
+# - lib/Parse/ParseDecl.cpp
+# - include/swift/AST/Attr.def
+#
 
 # Optional function to find @attributes declared in files.
 ATTRIBUTES() {
