@@ -14,7 +14,7 @@
         "lsp_format_on_save": false,
         "LSP": {
             "SourceKit": {
-                "enabled": false
+                "enabled": true
             },
             "LSP-yaml": {
                 "settings": {
