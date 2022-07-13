@@ -1530,7 +1530,6 @@ contexts:
             | frozen
             | globalActor
             | inlinable
-            | inline
             | main
             | noDerivative
             | noescape
@@ -1555,6 +1554,20 @@ contexts:
       captures:
         1: meta.annotation.swift punctuation.definition.annotation.swift
         2: meta.annotation.identifier.swift support.function.annotation.swift
+
+    - match: (@)\s*\b(inline)\b\s*(\()
+      captures:
+        1: meta.annotation.swift punctuation.definition.annotation.swift
+        2: meta.annotation.identifier.swift support.function.annotation.swift
+        3: punctuation.section.parens.begin.swift
+      push:
+        - meta_content_scope: meta.annotation.parameters.swift
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - match: '\b(?:__always|never)\b'
+          scope: constant.language.swift
+        - include: else-pop
 
     - match: |-
         (?x:
@@ -2018,7 +2031,6 @@ contexts:
           | _forward
           | _linear
 
-          | __always
           | __consuming
           | __owned
           | __shared
