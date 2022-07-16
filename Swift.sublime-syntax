@@ -882,18 +882,20 @@ contexts:
         1: storage.modifier.actor-isolation.nonisolated.swift
 
   modifier-reference-counting:
-    - match: |-
-        (?x:
-          (?:
-            \b(unowned)\b(?:\s*\(\s*((?:un)?safe)\s*\))?
-          | \b(weak)\b
-          )
-          (?=\s|$)
-        )
-      captures:
-        1: storage.modifier.unowned.swift
-        2: storage.modifier.unowned.swift
-        3: storage.modifier.weak.swift
+    - match: \bunowned\b
+      scope: storage.modifier.unowned.swift
+      push:
+        - match: \)
+          scope: punctuation.section.parens.end.swift
+          pop: 1
+        - match: \(
+          scope: punctuation.section.parens.begin.swift
+        - match: (?:un)?safe
+          scope: constant.language.attribute-option.swift
+        - include: else-pop
+
+    - match: \bweak\b
+      scope: storage.modifier.weak.swift
 
   modifier-types:
     # opaque-type
@@ -1566,7 +1568,7 @@ contexts:
           scope: punctuation.section.parens.end.swift
           pop: 1
         - match: '\b(?:__always|never)\b'
-          scope: constant.language.swift
+          scope: constant.language.attribute-option.swift
         - include: else-pop
 
     - match: |-
