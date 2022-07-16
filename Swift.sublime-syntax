@@ -1145,20 +1145,34 @@ contexts:
           scope: support.module.swift
 
   declaration-constant:
-    - match: \b(let)\b(?:\s+)?({{identifier}})?(?:\s*(:))?
+    - match: \b(let)\b(?!\s*:)
       captures:
-        0: meta.let.swift
         1: keyword.declaration.let.swift
-        2: meta.entity.name.let.swift variable.other.constant.swift
-        3: punctuation.separator.annotation.type-annotation.swift
+      push:
+        - meta_scope: meta.let.swift
+        - match: (?=\s*[={])
+          pop: 1
+        - match: ':'
+          scope: punctuation.separator.annotation.type-annotation.swift
+          pop: 1
+        - match: '{{identifier}}'
+          scope: meta.entity.name.let.swift variable.other.constant.swift
+        - include: else-pop
 
   declaration-variable:
-    - match: \b(var)\b(?:\s+)?({{identifier}})?(?:\s*(:))?
+    - match: \b(var)\b(?!\s*:)
       captures:
-        0: meta.var.swift
         1: keyword.declaration.var.swift
-        2: meta.entity.name.var.swift variable.other.swift
-        3: punctuation.separator.annotation.type-annotation.swift
+      push:
+        - meta_scope: meta.var.swift
+        - match: (?=\s*[={])
+          pop: 1
+        - match: ':'
+          scope: punctuation.separator.annotation.type-annotation.swift
+          pop: 1
+        - match: '{{identifier}}'
+          scope: meta.entity.name.var.swift variable.other.swift
+        - include: else-pop
 
   declaration-typealias:
     - match: \btypealias\b
