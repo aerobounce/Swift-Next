@@ -1697,6 +1697,7 @@ contexts:
     - include: types
     - include: identifier-support
     - include: punctuations
+    - match: '\w+' # Consume the remaining identifier
     - include: else-pop
 
   # Generic parameter clause for declarations
