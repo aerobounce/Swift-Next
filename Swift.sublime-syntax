@@ -95,7 +95,7 @@ variables:
   access_levels: '\b(?:(private)|(fileprivate)|(internal)|(public)|(open))\b'
 
   generic_clause_chars: '{{identifier_character}}{{whitespaces}}<:&\.,\s`>'
-  generic_clause_chars_call_site: '{{generic_clause_chars}}\?\!\(\)'
+  generic_clause_chars_call_site: '{{generic_clause_chars}}\?\!\(\)\[\]'
 
 #
 # Aside from contexts in Prototypes, a few contexts have a variant with '-pop' suffix:
@@ -1693,6 +1693,7 @@ contexts:
         1: keyword.operator.optional.swift
         2: keyword.operator.implicitly-unwrapped-optional.swift
     - include: parameter-list
+    - include: square-brackets
     - include: types
     - include: identifier-support
     - include: punctuations
