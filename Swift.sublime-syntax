@@ -357,14 +357,24 @@ contexts:
       scope: meta.number.integer.decimal.swift constant.numeric.value.swift
 
   floating-point-literal:
+    # floating-point-literal without decimal-fraction
+    - match: |-
+        (?x:\b
+          ([0-9][0-9_]*[eE][-+]?)
+          (?!\.)
+          ([0-9][0-9_]*)
+        \b)
+      captures:
+        0: meta.number.float.decimal.swift
+        1: constant.numeric.value.swift
+        2: constant.numeric.value.swift
+    # floating-point-literal with decimal-fraction
     - match: |-
         (?x:\b
           ([0-9][0-9_]*)
-          (?:(\.)|([eE][-+]?))
-          (
-            (?:[0-9][0-9_]*)?
-            (?:[eE][-+]?[0-9][0-9_]*)?
-          )
+          (\.)
+          ([0-9][0-9_]*)
+          ([eE][-+]?[0-9][0-9_]*)?
         \b)
       captures:
         0: meta.number.float.decimal.swift
