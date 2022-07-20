@@ -994,8 +994,6 @@ contexts:
     - match: (\.{3})(?=\s*[{{line_break}},)])
       captures:
         1: keyword.operator.variadic.swift
-    - match: \&
-      scope: keyword.operator.protocol-composition-type.swift
     - match: (?==)
       push:
         - match: \&
