@@ -549,7 +549,7 @@ contexts:
             # Pattern Matching
             | (~=)
             # Logical
-            | (!(?=[^=)])(?!$)|&&|\|\|)
+            | (!(?=[^=)\s])(?!$)|&&|\|\|)
             # Bit Shift (with Assignment)
             | (&?(?:<<|>>)=?)
             # Bitwise (with Assignment)
