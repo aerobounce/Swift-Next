@@ -1014,7 +1014,7 @@ contexts:
     - match: '{{identifier}}'
     - include: else-pop
 
-  # code-block that is allowed to declare access levels inside.
+  # code-block that can be declared within the access label.
   code-block:
     - match: \{
       scope: punctuation.section.block.begin.swift
@@ -1030,10 +1030,12 @@ contexts:
     - include: immediately-pop
     # - include: else-pop
 
-  # code-block that is not allowed to declare access levels inside.
+  # code-block that can not be declared within the access label.
   inner-code-block:
-    - match: \{
-      scope: punctuation.section.block.begin.swift
+    - match: (?:(?:{{identifier}})\s*(:)\s*)?(\{)
+      captures:
+        1: punctuation.separator.trailing-closure.swift
+        2: punctuation.section.block.begin.swift
       push:
         - meta_scope: meta.block.swift
         - match: \}
