@@ -709,6 +709,8 @@ contexts:
         3: keyword.operator.word.type-casting.as.optional.swift
         4: keyword.operator.word.type-casting.as.forced.swift
 
+  # [ TODO: Extract control flow statements from Keyword section. ] #
+  # [ TODO: Capture a control flow statement as a block to distinguish keywords like 'in'. ] #
   keyword-control-flows:
     # loop-statement
     - match: \b(?:(for)|(while)|(repeat)|(in))\b

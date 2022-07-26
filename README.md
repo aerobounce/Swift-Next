@@ -9,7 +9,7 @@
 
 ## Features
 
-- Full support of Swift 5.6 (some accepted / implemented proposals are supported in advance).
+- Swift 5.6 support
     - Older Swift versions (deprecated or retired syntax) are not supported, and not in plan.
 - Supports [Documentation Comment Syntax](https://github.com/apple/swift/blob/main/docs/DocumentationComments.md)
 - Supports `MARK:` `TODO:` `FIXME:`
@@ -26,9 +26,10 @@
 - [ ] Resolve TODOs left in files
 - [ ] Squash corner cases that scope goes wrong
 - [ ] Remove commented matches left for debugging purpose
-- [x] Better documentation markup support
 - [ ] Add tests
 - [ ] Add build system (if cross-platform is possible?)
+- [ ] Support swift-5.7-RELEASE
+- [x] Better documentation markup support
 
 ## Install
 
