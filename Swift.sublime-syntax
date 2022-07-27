@@ -252,6 +252,12 @@ contexts:
       scope: invalid.illegal.unexpected-word.swift
       pop: 1
 
+  identifier-consumer:
+    - match: '{{identifier}}'
+
+  whitespace-consumer:
+    - match: '[ ]'
+
   ### [ Comments ] ######################################################################
 
   comments:
@@ -709,23 +715,36 @@ contexts:
         3: keyword.operator.word.type-casting.as.optional.swift
         4: keyword.operator.word.type-casting.as.forced.swift
 
-  # [ TODO: Extract control flow statements from Keyword section. ] #
-  # [ TODO: Capture a control flow statement as a block to distinguish keywords like 'in'. ] #
   keyword-control-flows:
-    # loop-statement
-    - match: \b(?:(for)|(while)|(repeat)|(in))\b
+    - match: (?:{{identifier}}\s*(:)\s*)?\b(for)\b
       captures:
-        1: keyword.control.loop.for.swift
+        1: punctuation.separator.labeled-statement.swift
+        2: keyword.control.loop.for.swift
+      push:
+        - match: \bin\b
+          scope: keyword.control.loop.in.swift
+          pop: 1
+        - include: statements-scope-any
+        - include: identifier-consumer
+        - include: whitespace-consumer
+        - include: else-pop
+
+    # loop-statement
+    - match: (?:{{identifier}}\s*(:)\s*)?\b(?:(while)|(repeat))\b
+      captures:
+        1: punctuation.separator.labeled-statement.swift
         2: keyword.control.loop.while.swift
         3: keyword.control.loop.repeat.swift
-        4: keyword.control.loop.in.swift
 
     # branch-statement
-    - match: \b(?:(if)|(else\s+if)|(else))\b
+    - match: (?:{{identifier}}\s*(:)\s*)?\b(if)\b
       captures:
-        1: keyword.control.conditional.if.swift
-        2: keyword.control.conditional.elseif.swift
-        3: keyword.control.conditional.else.swift
+        1: punctuation.separator.labeled-statement.swift
+        2: keyword.control.conditional.if.swift
+    - match: \b(?:(else\s+if)|(else))\b
+      captures:
+        1: keyword.control.conditional.elseif.swift
+        2: keyword.control.conditional.else.swift
 
     # guard-statement
     - match: \b(guard)\b
@@ -733,8 +752,14 @@ contexts:
         1: keyword.control.conditional.guard.swift
 
     # switch-statement
-    - match: \bswitch\b(?=(\s+[{{identifier_character}}.]+|\s*\())
-      scope: keyword.control.conditional.switch.swift
+    - match: |-
+        (?x:
+          (?:{{identifier}}\s*(:)\s*)?
+          \b(switch)\b(?=(\s+[{{identifier_character}}.]+|\s*\())
+        )
+      captures:
+        1: punctuation.separator.labeled-statement.swift
+        2: keyword.control.conditional.switch.swift
       push:
         - include: parameter-list
         - match: \{
@@ -772,10 +797,12 @@ contexts:
               # scope: invalid.swift
             - include: else-pop
 
-    - match: \b(?:(switch)|(default))\b
+    - match: (?:{{identifier}}\s*(:)\s*)?\b(switch)\b
       captures:
-        1: keyword.control.conditional.switch.swift
-        2: keyword.control.conditional.default.swift
+        1: punctuation.separator.labeled-statement.swift
+        2: keyword.control.conditional.switch.swift
+    - match: \bdefault\b
+      scope: keyword.control.conditional.default.swift
 
     - match: \b(case)\b(?:\s+(\.)({{identifier}})(:))?
       captures:
@@ -799,10 +826,12 @@ contexts:
         1: keyword.control.flow.defer.swift
 
     # do-statement
-    - match: \b(?:(do)|(catch))\b
+    - match: (?:{{identifier}}\s*(:)\s*)?\b(do)\b
       captures:
-        1: keyword.control.flow.do.swift
-        2: keyword.control.exception.catch.swift
+        1: punctuation.separator.labeled-statement.swift
+        2: keyword.control.flow.do.swift
+    - match: \bcatch\b
+      scope: keyword.control.exception.catch.swift
 
   # Keywords used in declarations
   keyword-declarations:
