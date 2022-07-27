@@ -229,7 +229,7 @@ contexts:
   # prevent unintended meta-scope nest and keep matching when closing bracket is missing
   # by look-ahead words that cannot appear inside the scope.
 
-  # Note:
+  # [ TODO ] #
   # Those "invalid..." scopes should be commented out or removed in the end.
 
   access-level-pop:
