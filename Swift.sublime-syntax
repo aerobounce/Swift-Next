@@ -716,6 +716,7 @@ contexts:
         4: keyword.operator.word.type-casting.as.forced.swift
 
   keyword-control-flows:
+    # loop-statement
     - match: (?:{{identifier}}\s*(:)\s*)?\b(for)\b
       captures:
         1: punctuation.separator.labeled-statement.swift
@@ -728,8 +729,6 @@ contexts:
         - include: identifier-consumer
         - include: whitespace-consumer
         - include: else-pop
-
-    # loop-statement
     - match: (?:{{identifier}}\s*(:)\s*)?\b(?:(while)|(repeat))\b
       captures:
         1: punctuation.separator.labeled-statement.swift
