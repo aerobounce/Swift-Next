@@ -1077,6 +1077,9 @@ contexts:
           captures:
             0: keyword.operator.implicit-parameter-name.swift
             1: meta.number.integer.decimal.swift constant.numeric.value.swift
+        # closure-signature in
+        - match: \bin\b
+          scope: keyword.other.closure-signature-in.swift
         - include: access-level-pop
         - include: statements-scope-block
         - include: statements-scope-any
