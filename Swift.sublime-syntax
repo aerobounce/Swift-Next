@@ -1201,6 +1201,14 @@ contexts:
           pop: 1
         - match: '{{identifier}}'
           scope: meta.entity.name.let.swift variable.other.constant.swift
+        # For value-binding
+        - match: \(\s*({{identifier}})
+          captures:
+            1: meta.entity.name.let.swift variable.other.constant.swift
+        - match: '\s*{{identifier}}'
+        - match: '\)'
+        - match: ','
+          scope: punctuation.separator.continuation.swift
         - include: else-pop
 
   declaration-variable:
@@ -1216,6 +1224,14 @@ contexts:
           pop: 1
         - match: '{{identifier}}'
           scope: meta.entity.name.var.swift variable.other.swift
+        # For value-binding
+        - match: \(\s*({{identifier}})
+          captures:
+            1: meta.entity.name.var.swift variable.other.swift
+        - match: '\s*{{identifier}}'
+        - match: '\)'
+        - match: ','
+          scope: punctuation.separator.continuation.swift
         - include: else-pop
 
   declaration-typealias:
