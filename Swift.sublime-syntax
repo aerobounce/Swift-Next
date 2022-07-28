@@ -1023,6 +1023,10 @@ contexts:
     - match: (\.{3})(?=\s*[{{line_break}},)])
       captures:
         1: keyword.operator.variadic.swift
+    # protocol-composition-type
+    - match: \&
+      scope: keyword.operator.protocol-composition-type.swift
+    # bitwise-operator
     - match: (?==)
       push:
         - match: (?=,)
