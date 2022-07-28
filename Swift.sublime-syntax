@@ -1026,6 +1026,8 @@ contexts:
         1: keyword.operator.variadic.swift
     - match: (?==)
       push:
+        - match: (?=,)
+          pop: 1
         - match: \&
           scope: keyword.operator.bitwise.swift
         - include: keyword-declarations
