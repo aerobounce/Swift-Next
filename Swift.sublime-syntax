@@ -2048,17 +2048,20 @@ contexts:
     - match: |-
         (?x:
           (\#)
-          (?:
+          (
             # literal-expression
             file | fileID | filePath
           | line | column | function | dsohandle
           )\b
         )
-      scope: meta.preprocessor.swift keyword.other.preprocessor.swift
+      captures:
+        0: meta.preprocessor.swift
+        1: punctuation.definition.preprocessor.swift
+        2: keyword.other.preprocessor.swift
     - match: |-
         (?x:
           (\#)
-          (?:
+          (
           # playground-literal
             colorLiteral | fileLiteral | imageLiteral
           # selector-expression
@@ -2071,7 +2074,10 @@ contexts:
           | error | warning
           )\b
         )
-      scope: keyword.other.preprocessor.swift
+      captures:
+        0: meta.preprocessor.swift
+        1: punctuation.definition.preprocessor.swift
+        2: keyword.other.preprocessor.swift
       push:
         - - meta_scope: meta.preprocessor.swift
           - include: immediately-pop
