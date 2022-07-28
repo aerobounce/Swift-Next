@@ -792,8 +792,7 @@ contexts:
                 - include: statements-scope-any
             - include: statements-scope-block
             - include: statements-scope-any
-            - match: '{{identifier}}'
-              # scope: invalid.swift
+            - include: identifier-consumer
             - include: else-pop
 
     - match: (?:{{identifier}}\s*(:)\s*)?\b(switch)\b
@@ -1035,7 +1034,7 @@ contexts:
         - include: declaration-constant
         - include: declaration-variable
         - include: statements-scope-any
-        - match: '{{identifier}}'
+        - include: identifier-consumer
         - include: else-pop
 
     - include: keyword-declarations
@@ -1043,7 +1042,7 @@ contexts:
     - include: declaration-constant
     - include: declaration-variable
     - include: statements-scope-any
-    - match: '{{identifier}}'
+    - include: identifier-consumer
     - include: else-pop
 
   # code-block that can be declared within the access label.
@@ -1085,7 +1084,7 @@ contexts:
         - include: statements-scope-block
         - include: statements-scope-any
         - include: file-scope-word-pop
-        - match: '{{identifier}}'
+        - include: identifier-consumer
         - include: else-pop
 
   inner-code-block-pop:
@@ -1486,7 +1485,7 @@ contexts:
           pop: 1
         - include: punctuations
         - include: identifier-support
-        - match: '{{identifier}}'
+        - include: identifier-consumer
         - include: else-pop
     - include: reserved-word-pop-2
 
@@ -1758,7 +1757,7 @@ contexts:
     - include: types
     - include: identifier-support
     - include: punctuations
-    - match: '{{identifier}}' # Consume the remaining identifier
+    - include: identifier-consumer
     - include: else-pop
 
   # Generic parameter clause for declarations
