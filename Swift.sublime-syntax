@@ -1024,7 +1024,7 @@ contexts:
       captures:
         1: keyword.operator.variadic.swift
     # protocol-composition-type
-    - match: \&
+    - match: \&(?=\s*{{identifier}})
       scope: keyword.operator.protocol-composition-type.swift
     # bitwise-operator
     - match: (?==)
