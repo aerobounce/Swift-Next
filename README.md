@@ -23,6 +23,7 @@
 ## Status
 
 - [ ] Finish visual test against all the swift files in [apple/swift](https://github.com/apple/swift) repository
+    - [x] `swift-5.6-RELEASE/benchmark`
 - [ ] Resolve TODOs left in files
 - [ ] Squash corner cases that scope goes wrong
 - [ ] Remove commented matches left for debugging purpose
