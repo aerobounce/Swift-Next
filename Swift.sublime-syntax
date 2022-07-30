@@ -555,7 +555,7 @@ contexts:
             # Pattern Matching
             | (~=)
             # Logical
-            | (!(?=[^=)\]\s])(?!$)|&&|\|\|)
+            | (!(?=[^=)\]\s,])(?!$)|&&|\|\|)
             # Bit Shift (with Assignment)
             | (&?(?:<<|>>)=?)
             # Bitwise (with Assignment)
