@@ -665,9 +665,9 @@ contexts:
           (?=
             # Weak speculation that both protocols are title-cased, so it's
             # not a bit wise expression (variables should begin lower-cased).
-            [A-Z][{{identifier_character}}]*
+            [A-Z][{{identifier_character}}<&>]*
             \s*&\s*
-            [A-Z][{{identifier_character}}]*
+            [A-Z][{{identifier_character}}<&>]*
           )
         )
       push:
@@ -1023,9 +1023,6 @@ contexts:
     - match: (\.{3})(?=\s*[{{line_break}},)])
       captures:
         1: keyword.operator.variadic.swift
-    # protocol-composition-type
-    - match: \&(?=\s*{{identifier}})
-      scope: keyword.operator.protocol-composition-type.swift
     # bitwise-operator
     - match: (?==)
       push:
@@ -1241,9 +1238,11 @@ contexts:
       scope: keyword.declaration.typealias.swift
       push:
         - meta_scope: meta.typealias.swift
+        - match: (?==)
+          pop: 1
         - match: ({{non_reserved_identifier}})
           scope: keyword.symbol-list.swift entity.name.typealias.swift
-          pop: 1
+        - include: generic-parameter-clause-declaration
         - include: else-pop
 
   declaration-func:
@@ -1754,12 +1753,15 @@ contexts:
       captures:
         1: keyword.operator.optional.swift
         2: keyword.operator.implicitly-unwrapped-optional.swift
+    - match: '&'
+      scope: keyword.operator.protocol-composition-type.swift
     - include: parameter-list
     - include: square-brackets
     - include: types
     - include: identifier-support
     - include: punctuations
     - include: identifier-consumer
+    - include: whitespace-consumer
     - include: else-pop
 
   # Generic parameter clause for declarations
@@ -1801,6 +1803,8 @@ contexts:
         - include: generic-parameter-clause-declaration-body-common
         - include: types
         - include: identifier-support
+        - include: identifier-consumer
+        - include: whitespace-consumer
     - include: generic-parameter-clause-declaration-body-common
 
   generic-parameter-clause-declaration-body-common:
