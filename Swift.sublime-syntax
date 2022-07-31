@@ -678,10 +678,11 @@ contexts:
         - include: identifier-support
 
     # metatype-type
-    - match: \b(?:(Type)|(Protocol))\b(?!`)
+    - match: (\.)\b(?:(Type)|(Protocol))\b(?!`)
       captures:
-        1: storage.type.metatype.type.swift
-        2: storage.type.metatype.protocol.swift
+        1: punctuation.accessor.dot.swift
+        2: storage.type.metatype.type.swift
+        3: storage.type.metatype.protocol.swift
 
     # any-type
     - match: \bAny\b(?!`)
