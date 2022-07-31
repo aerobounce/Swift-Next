@@ -170,9 +170,9 @@ contexts:
     - include: modifier-for-parameter
 
   statements-scope-any:
+    - include: types
     - include: punctuations
     - include: literals
-    - include: types
     # Keywords
     - include: keyword-operators
     - include: keyword-control-flows
