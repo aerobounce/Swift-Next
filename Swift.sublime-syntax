@@ -1196,7 +1196,7 @@ contexts:
         1: keyword.declaration.let.swift
       push:
         - meta_scope: meta.let.swift
-        - match: (?=\s*(?:as|[={)]))
+        - match: (?=\s*(?:as|[={]))
           pop: 1
         - match: ':'
           scope: punctuation.separator.annotation.type-annotation.swift
@@ -1218,7 +1218,7 @@ contexts:
         1: keyword.declaration.var.swift
       push:
         - meta_scope: meta.var.swift
-        - match: (?=\s*(?:as|[={)]))
+        - match: (?=\s*(?:as|[={]))
           pop: 1
         - match: ':'
           scope: punctuation.separator.annotation.type-annotation.swift
