@@ -150,7 +150,6 @@ contexts:
     - include: modifier-class
     - include: modifier-storage
     - include: modifier-access-level
-    - include: modifier-mutation
     - include: modifier-actor-isolation
     - include: modifier-reference-counting
 
@@ -164,6 +163,7 @@ contexts:
     - include: declaration-class
     - include: declaration-actor
     - include: keyword-declarations
+    - include: modifier-mutation
     - include: modifier-operator
 
   statements-scope-parameter:
