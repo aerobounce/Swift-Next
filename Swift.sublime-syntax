@@ -1857,8 +1857,10 @@ contexts:
   ### [ Compiler ] ######################################################################
 
   compiler-availability:
-    - match: \#(available|unavailable)\b
-      scope: keyword.other.preprocessor.swift
+    - match: (\#)(available|unavailable)\b
+      captures:
+        1: punctuation.definition.preprocessor.swift
+        2: keyword.other.preprocessor.availability.swift
       push:
         - - meta_scope: meta.preprocessor.swift
           - include: immediately-pop
