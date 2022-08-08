@@ -762,6 +762,7 @@ contexts:
         2: keyword.control.conditional.switch.swift
       push:
         - include: parameter-list
+        - include: punctuations
         - match: \{
           scope: punctuation.section.block.begin.swift
           set:
