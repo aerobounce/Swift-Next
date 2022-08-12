@@ -148,7 +148,6 @@ contexts:
     - include: declaration-init-deinit
     - include: declaration-subscript
     - include: modifier-class
-    - include: modifier-storage
     - include: modifier-access-level
     - include: modifier-actor-isolation
     - include: modifier-reference-counting
@@ -163,6 +162,7 @@ contexts:
     - include: declaration-class
     - include: declaration-actor
     - include: keyword-declarations
+    - include: modifier-storage
     - include: modifier-mutation
     - include: modifier-operator
 
