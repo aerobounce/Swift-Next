@@ -303,6 +303,7 @@ contexts:
         - match: \*/(?!.*?\*/)
           scope: punctuation.definition.comment.end.swift
           pop: 1
+        - match: /\*.*\*/
 
   comment-block:
     - match: /\*
@@ -312,6 +313,7 @@ contexts:
         - match: \*/(?!.*?\*/)
           scope: punctuation.definition.comment.end.swift
           pop: 1
+        - match: /\*.*\*/
 
   ### [ Punctuations ] ##################################################################
 
