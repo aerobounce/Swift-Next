@@ -300,7 +300,7 @@ contexts:
       scope: punctuation.definition.comment.begin.swift
       push:
         - meta_scope: comment.block.documentation.swift
-        - match: \*/(?!.*?\*/)
+        - match: .*\*/
           scope: punctuation.definition.comment.end.swift
           pop: 1
         - match: /\*.*\*/
@@ -310,7 +310,7 @@ contexts:
       scope: punctuation.definition.comment.begin.swift
       push:
         - meta_scope: comment.block.swift
-        - match: \*/(?!.*?\*/)
+        - match: .*\*/
           scope: punctuation.definition.comment.end.swift
           pop: 1
         - match: /\*.*\*/
