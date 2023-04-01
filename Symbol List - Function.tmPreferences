@@ -22,12 +22,12 @@
         <string><![CDATA[
 
         # Remove comments
-        s/\/\/.*//g
+        s/\s*\/\/.*$//g
 
         # Regularize spaces in advance
         s/\n//g
-        s/^ +//g
-        s/ +/ /g
+        s/^\s+//g
+        s/\s+/ /g
 
         # Remove [], <Generics>, @attributes and return-arrow ->
         s/\[.*?\]//g
@@ -62,7 +62,7 @@
         s/,//g
 
         # Remove spaces
-        s/ //g
+        s/\s//g
 
         # Add space after operator
         s/^([^\w]+)\(/\1 \(/g
