@@ -768,7 +768,7 @@ contexts:
         - match: \{
           scope: punctuation.section.block.begin.swift
           set:
-            - meta_scope: meta.block.swift
+            - meta_scope: meta.block.swift meta.switch.swift
             - match: \}
               scope: punctuation.section.block.end.swift
               pop: 1
@@ -777,6 +777,9 @@ contexts:
                 1: keyword.control.conditional.case.swift
                 2: keyword.control.conditional.default.swift
               push:
+                - match: '='
+                  scope: keyword.operator.assignment.swift
+                  pop: 1
                 - match: ':'
                   scope: punctuation.separator.swift
                   pop: 1
