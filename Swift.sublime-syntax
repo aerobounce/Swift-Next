@@ -266,10 +266,10 @@ contexts:
     - include: comment-block-doc
     - include: comment-block
 
-  comment-line-doc:
-    - match: (?=///)
-      scope: punctuation.definition.comment.begin.swift
-      push: Swift - Markup.sublime-syntax
+  # comment-line-doc:
+  #   - match: (?=///)
+  #     scope: punctuation.definition.comment.begin.swift
+  #     push: Swift - Markup.sublime-syntax
 
   comment-line:
     - match: (//)\s*(?=\b(?:TODO|FIXME)\b)
