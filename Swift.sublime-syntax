@@ -266,28 +266,27 @@ contexts:
     - include: comment-block-doc
     - include: comment-block
 
-  # comment-line-doc:
-  #   - match: (?=///)
-  #     scope: punctuation.definition.comment.begin.swift
-  #     push: Swift - Markup.sublime-syntax
+  comment-line-doc:
+    - match: ^\s*(///)
+      captures:
+        1: punctuation.definition.comment.begin.swift
+      push:
+        - meta_scope: comment.line.documentation.swift
+        - match: $
+          pop: 1
+        - match: (`.+?`)
+          scope: markup.raw.inline.swift
+        - match: (\s*-\s+)(.+)(?=\:)
+          captures:
+            1: markup.list.unnumbered.bullet.swift punctuation.definition.list_item.swift
+            2: markup.bold.swift punctuation.definition.annotation.swift
 
   comment-line:
-    - match: (//)\s*(?=\b(?:TODO|FIXME)\b)
+    - match: (//)\s*(?:(TODO.*|FIXME.*))$
       captures:
         0: comment.line.double-slash.swift
         1: punctuation.definition.comment.begin.swift
-      push:
-        - meta_content_scope: meta.toc-list.todo.swift
-        - match: ^(?=\s*///)
-          pop: 1
-        - match: ^(?!\s*//)|(?=\s*//\s*$)|(?=(//)\s*\b(?:TODO|FIXME)\b)
-          pop: 1
-        - match: ^\s*(//)
-          captures:
-            0: comment.line.double-slash.swift
-            1: punctuation.definition.comment.begin.swift
-        - match: .+
-          scope: comment.line.swift markup.bold.swift
+        2: meta.toc-list.todo.swift comment.line.swift markup.bold.swift
 
     - match: (//)\s*(?:(MARK:.*)|.*)$
       captures:
