@@ -661,22 +661,22 @@ contexts:
 
   types:
     # protocol-composition-type
-    - match: |-
-        (?x:
-          (?=
-            # Weak speculation that both protocols are title-cased, so it's
-            # not a bit wise expression (variables should begin lower-cased).
-            [A-Z][{{identifier_character}}<&>]*
-            \s*&\s*
-            [A-Z][{{identifier_character}}<&>]*
-          )
-        )
-      push:
-        - match: \&
-          scope: keyword.operator.protocol-composition-type.swift
-          pop: 1
-        - include: generic-parameter-clause-declaration
-        - include: identifier-support
+    # - match: |-
+    #     (?x:
+    #       (?=
+    #         # Weak speculation that both protocols are title-cased, so it's
+    #         # not a bit wise expression (variables should begin lower-cased).
+    #         [A-Z][{{identifier_character}}<&>]*
+    #         \s*&\s*
+    #         [A-Z][{{identifier_character}}<&>]*
+    #       )
+    #     )
+    #   push:
+    #     - match: \&
+    #       scope: keyword.operator.protocol-composition-type.swift
+    #       pop: 1
+    #     - include: generic-parameter-clause-declaration
+    #     - include: identifier-support
 
     # metatype-type
     - match: (\.)\b(?:(Type)|(Protocol))\b(?!`)
