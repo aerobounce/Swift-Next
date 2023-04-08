@@ -1106,7 +1106,7 @@ contexts:
         0: meta.brackets.swift
         1: punctuation.section.brackets.begin.swift
         2: punctuation.section.brackets.end.swift
-    - match: (?=\[)
+    - match: \[
       scope: punctuation.section.brackets.begin.swift
       push:
         - meta_scope: meta.brackets.swift
@@ -1120,8 +1120,6 @@ contexts:
             3: punctuation.separator.key-value.swift
         - match: ':'
           scope: punctuation.separator.key-value.swift
-        - match: \[
-          scope: punctuation.section.brackets.begin.swift
         - include: modifier-reference-counting # for capture-list
         - include: statements-scope-any
         - include: file-scope-word-pop
