@@ -1045,6 +1045,7 @@ contexts:
 
     - include: keyword-declarations
     - include: statements-scope-parameter
+    - include: reserved-word-pop
     - include: declaration-constant
     - include: declaration-variable
     - include: statements-scope-any
