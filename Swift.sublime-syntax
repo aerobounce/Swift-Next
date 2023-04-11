@@ -79,7 +79,6 @@ variables:
           # Manually selected words
           guard|if|switch|case
         )\b(?!\s*[:(])
-        |@
       )
     )
   file_scope_word: (?=\b(import|protocol|extension|operator|precedencegroup)\b)
