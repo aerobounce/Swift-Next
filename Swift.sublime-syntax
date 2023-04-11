@@ -274,9 +274,9 @@ contexts:
         - meta_scope: comment.line.documentation.swift
         - match: $
           pop: 1
-        - match: (`.+?`)
+        - match: (`[^`]+?`)
           scope: markup.raw.inline.swift
-        - match: (\s*-\s+)(.+)(?=\:)
+        - match: (\s*-\s+)(.+)(?=\:[ ])
           captures:
             1: markup.list.unnumbered.bullet.swift punctuation.definition.list_item.swift
             2: markup.bold.swift punctuation.definition.annotation.swift
