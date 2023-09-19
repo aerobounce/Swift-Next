@@ -1203,7 +1203,7 @@ contexts:
           pop: 1
         - match: ':'
           scope: punctuation.separator.annotation.type-annotation.swift
-          pop: 1        
+          pop: 1
         - match: '{{non_reserved_identifier}}'
           scope: meta.entity.name.let.swift variable.other.constant.swift
         # For value-binding
@@ -1231,7 +1231,7 @@ contexts:
           pop: 1
         - match: ':'
           scope: punctuation.separator.annotation.type-annotation.swift
-          pop: 1        
+          pop: 1
         - match: '{{non_reserved_identifier}}'
           scope: meta.entity.name.var.swift variable.other.swift
         # For value-binding
