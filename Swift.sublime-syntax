@@ -1204,7 +1204,7 @@ contexts:
         - match: ':'
           scope: punctuation.separator.annotation.type-annotation.swift
           pop: 1
-        - match: '{{identifier}}'
+        - match: '{{non_reserved_identifier}}'
           scope: meta.entity.name.let.swift variable.other.constant.swift
         # For value-binding
         - match: \(\s*({{identifier}})
@@ -1218,6 +1218,7 @@ contexts:
             - match: ({{identifier}})
               captures:
                 1: meta.entity.name.let.swift variable.other.constant.swift
+        - include: reserved-word-pop
         - include: else-pop
 
   declaration-variable:
@@ -1231,7 +1232,7 @@ contexts:
         - match: ':'
           scope: punctuation.separator.annotation.type-annotation.swift
           pop: 1
-        - match: '{{identifier}}'
+        - match: '{{non_reserved_identifier}}'
           scope: meta.entity.name.var.swift variable.other.swift
         # For value-binding
         - match: \(\s*({{identifier}})
@@ -1245,6 +1246,7 @@ contexts:
             - match: ({{identifier}})
               captures:
                 1: meta.entity.name.let.swift variable.other.constant.swift
+        - include: reserved-word-pop
         - include: else-pop
 
   declaration-typealias:
